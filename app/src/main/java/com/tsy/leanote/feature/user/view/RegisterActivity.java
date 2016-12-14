@@ -1,8 +1,5 @@
 package com.tsy.leanote.feature.user.view;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
 import android.widget.EditText;
@@ -11,7 +8,6 @@ import android.widget.ImageView;
 import com.tsy.leanote.MainActivity;
 import com.tsy.leanote.R;
 import com.tsy.leanote.base.BaseActivity;
-import com.tsy.leanote.constant.EnvConstant;
 import com.tsy.leanote.feature.user.bean.UserInfo;
 import com.tsy.leanote.feature.user.contract.UserContract;
 import com.tsy.leanote.feature.user.interactor.UserInteractor;
@@ -22,13 +18,16 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class LoginActivity extends BaseActivity {
+public class RegisterActivity extends BaseActivity {
 
     @BindView(R.id.edit_username)
     EditText edit_username;
 
     @BindView(R.id.edit_password)
     EditText edit_password;
+
+    @BindView(R.id.edit_password_confim)
+    EditText edit_password_confim;
 
     @BindView(R.id.img_pwd_visible)
     ImageView img_pwd_visible;
@@ -39,7 +38,8 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
+
         ButterKnife.bind(this);
 
         mUserInteractor = new UserInteractor();
@@ -50,19 +50,23 @@ public class LoginActivity extends BaseActivity {
         if(mPwdVisible) {
             mPwdVisible = false;
             edit_password.setTransformationMethod(PasswordTransformationMethod.getInstance());
+            edit_password_confim.setTransformationMethod(PasswordTransformationMethod.getInstance());
             img_pwd_visible.setImageResource(R.drawable.ic_login_not_show_pwd);
         } else {
             mPwdVisible = true;
             edit_password.setTransformationMethod(null);
+            edit_password_confim.setTransformationMethod(null);
             img_pwd_visible.setImageResource(R.drawable.ic_login_show_pwd);
         }
         edit_password.setSelection(edit_password.length());
+        edit_password_confim.setSelection(edit_password_confim.length());
     }
 
-    @OnClick(R.id.btn_login)
-    public void login() {
+    @OnClick(R.id.btn_register)
+    public void register() {
         String email = edit_username.getText().toString();
         String pwd = edit_password.getText().toString();
+        String pwd_confirm = edit_password_confim.getText().toString();
 
         if(StringUtils.isEmpty(email)) {
             ToastUtils.showShort(getApplicationContext(), R.string.user_email_empty);
@@ -74,10 +78,20 @@ public class LoginActivity extends BaseActivity {
             return;
         }
 
-        mUserInteractor.login(email, pwd, new UserContract.UserCallback() {
+        if(pwd.length() < 6) {
+            ToastUtils.showShort(getApplicationContext(), R.string.user_pwd_length_error);
+            return;
+        }
+
+        if(!pwd.equals(pwd_confirm)) {
+            ToastUtils.showShort(getApplicationContext(), R.string.user_confirm_pwd_error);
+            return;
+        }
+
+        mUserInteractor.register(email, pwd, new UserContract.UserCallback() {
             @Override
             public void onSuccess(UserInfo userInfo) {
-                startActivity(MainActivity.createIntent(LoginActivity.this));
+                startActivity(MainActivity.createIntent(RegisterActivity.this));
             }
 
             @Override
@@ -87,21 +101,8 @@ public class LoginActivity extends BaseActivity {
         });
     }
 
-    @OnClick(R.id.txt_forget_pwd)
-    public void forgetPwd() {
-        String forget_url = EnvConstant.HOST + "/findPassword";
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(forget_url));
-        startActivity(intent);
-    }
-
-    @OnClick(R.id.txt_register)
-    public void register() {
-        startActivity(new Intent(this, RegisterActivity.class));
-    }
-
-    public static Intent createIntent(Context context) {
-        Intent intent = new Intent(context, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        return intent;
+    @OnClick(R.id.txt_back_login)
+    public void backLogin() {
+        finish();
     }
 }

@@ -3,6 +3,7 @@ package com.tsy.leanote.base;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
+import com.tsy.leanote.MyApplication;
 import com.tsy.leanote.R;
 
 import java.util.HashMap;
@@ -106,5 +107,12 @@ public class BaseActivity extends AppCompatActivity implements EasyPermissions.P
                 callback.noPermission(false);
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        MyApplication.getInstance().getMyOkHttp().cancel(this);
     }
 }

@@ -31,6 +31,14 @@ public interface UserContract {
          * @return
          */
         UserInfo getCurUser();
+
+        /**
+         * 注册
+         * @param email
+         * @param pwd
+         * @param callback
+         */
+        void register(String email, String pwd, UserCallback callback);
     }
 
     interface UserCallback extends BaseInteractorCallback {

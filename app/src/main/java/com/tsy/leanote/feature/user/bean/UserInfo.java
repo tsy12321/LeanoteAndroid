@@ -20,16 +20,18 @@ public class UserInfo {
     private String email;
     private String logo;
     private String token;
+    private boolean verified;       //邮箱是否认证
 
-    @Generated(hash = 1892143106)
+    @Generated(hash = 1179477423)
     public UserInfo(Long id, String uid, String username, String email, String logo,
-            String token) {
+            String token, boolean verified) {
         this.id = id;
         this.uid = uid;
         this.username = username;
         this.email = email;
         this.logo = logo;
         this.token = token;
+        this.verified = verified;
     }
 
     @Generated(hash = 1279772520)
@@ -40,11 +42,12 @@ public class UserInfo {
     public String toString() {
         return "UserInfo{" +
                 "id=" + id +
-                ", uid=" + uid +
+                ", uid='" + uid + '\'' +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", logo='" + logo + '\'' +
                 ", token='" + token + '\'' +
+                ", verified=" + verified +
                 '}';
     }
 
@@ -94,5 +97,13 @@ public class UserInfo {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public boolean getVerified() {
+        return this.verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
     }
 }

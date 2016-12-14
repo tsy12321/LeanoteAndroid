@@ -1,6 +1,4 @@
 <resources>
-    <string name="app_name">蚂蚁笔记</string>
-
     <!--permission strings-->
     <string name="permission_deny_again_title">权限设置</string>
     <string name="permission_deny_again_positive">设置</string>
@@ -9,6 +7,10 @@
     <string name="permission_rc_storage">需要读写文件权限</string>
 
     <string name="permission_storage_deny_again">打开应用程序设置修改应用程序的存储权限</string>
+
+    <!--app-->
+    <string name="app_name">蚂蚁笔记</string>
+    <string name="app_no_network">网络未连接</string>
 
     <!--common单词-->
     <string name="email">邮箱</string>
@@ -20,5 +22,10 @@
     <!--user-->
     <string name="user_email_empty">邮箱不能为空</string>
     <string name="user_pwd_empty">密码不能为空</string>
+    <string name="user_create_account">创建leanote账户</string>
+    <string name="user_back_login">返回登录</string>
+    <string name="user_confirm_pwd">确认密码</string>
+    <string name="user_confirm_pwd_error">2次密码输入不一致</string>
+    <string name="user_pwd_length_error">密码至少6位</string>
 
 </resources>

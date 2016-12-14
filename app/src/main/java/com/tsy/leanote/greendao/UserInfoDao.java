@@ -30,6 +30,7 @@ public class UserInfoDao extends AbstractDao<UserInfo, Long> {
         public final static Property Email = new Property(3, String.class, "email", false, "EMAIL");
         public final static Property Logo = new Property(4, String.class, "logo", false, "LOGO");
         public final static Property Token = new Property(5, String.class, "token", false, "TOKEN");
+        public final static Property Verified = new Property(6, boolean.class, "verified", false, "VERIFIED");
     }
 
 
@@ -50,7 +51,8 @@ public class UserInfoDao extends AbstractDao<UserInfo, Long> {
                 "\"USERNAME\" TEXT," + // 2: username
                 "\"EMAIL\" TEXT," + // 3: email
                 "\"LOGO\" TEXT," + // 4: logo
-                "\"TOKEN\" TEXT);"); // 5: token
+                "\"TOKEN\" TEXT," + // 5: token
+                "\"VERIFIED\" INTEGER NOT NULL );"); // 6: verified
     }
 
     /** Drops the underlying database table. */
@@ -92,6 +94,7 @@ public class UserInfoDao extends AbstractDao<UserInfo, Long> {
         if (token != null) {
             stmt.bindString(6, token);
         }
+        stmt.bindLong(7, entity.getVerified() ? 1L: 0L);
     }
 
     @Override
@@ -127,6 +130,7 @@ public class UserInfoDao extends AbstractDao<UserInfo, Long> {
         if (token != null) {
             stmt.bindString(6, token);
         }
+        stmt.bindLong(7, entity.getVerified() ? 1L: 0L);
     }
 
     @Override
@@ -142,7 +146,8 @@ public class UserInfoDao extends AbstractDao<UserInfo, Long> {
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // username
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // email
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // logo
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5) // token
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // token
+            cursor.getShort(offset + 6) != 0 // verified
         );
         return entity;
     }
@@ -155,6 +160,7 @@ public class UserInfoDao extends AbstractDao<UserInfo, Long> {
         entity.setEmail(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setLogo(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setToken(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setVerified(cursor.getShort(offset + 6) != 0);
      }
     
     @Override

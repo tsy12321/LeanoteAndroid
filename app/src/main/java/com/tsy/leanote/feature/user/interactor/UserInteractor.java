@@ -1,12 +1,16 @@
 package com.tsy.leanote.feature.user.interactor;
 
+import android.content.Context;
+
 import com.tsy.leanote.MyApplication;
+import com.tsy.leanote.R;
 import com.tsy.leanote.constant.EnvConstant;
 import com.tsy.leanote.feature.user.bean.UserInfo;
 import com.tsy.leanote.feature.user.contract.UserContract;
 import com.tsy.leanote.greendao.UserInfoDao;
 import com.tsy.sdk.myokhttp.MyOkHttp;
 import com.tsy.sdk.myokhttp.response.JsonResponseHandler;
+import com.tsy.sdk.myutil.NetworkUtils;
 
 import org.json.JSONObject;
 
@@ -20,8 +24,10 @@ public class UserInteractor implements UserContract.Interactor {
 
     private final String API_LOGIN = "/api/auth/login";       //登录
     private final String API_GET_USER_IFNO = "/api/user/info";       //获取用户信息
+    private final String API_REGISTER = "/api/auth/register";       //注册
 
     private Object mTag;
+    private Context mContext;
     private MyOkHttp mMyOkHttp;
     private UserInfoDao mUserInfoDao;
 
@@ -31,6 +37,7 @@ public class UserInteractor implements UserContract.Interactor {
 
     public UserInteractor(Object tag) {
         mTag = tag;
+        mContext = MyApplication.getInstance().getContext();
         mMyOkHttp = MyApplication.getInstance().getMyOkHttp();
         mUserInfoDao = MyApplication.getInstance().getDaoSession().getUserInfoDao();
     }
@@ -43,6 +50,11 @@ public class UserInteractor implements UserContract.Interactor {
      */
     @Override
     public void login(String email, String pwd, final UserContract.UserCallback callback) {
+        if(!NetworkUtils.checkNetworkConnect(mContext)) {
+            callback.onFailure(mContext.getString(R.string.app_no_network));
+            return;
+        }
+
         String url = EnvConstant.HOST + API_LOGIN;
         mMyOkHttp.get()
                 .url(url)
@@ -85,6 +97,11 @@ public class UserInteractor implements UserContract.Interactor {
      */
     @Override
     public void getUserInfo(final String uid, String token, final UserContract.UserCallback callback) {
+        if(!NetworkUtils.checkNetworkConnect(mContext)) {
+            callback.onFailure(mContext.getString(R.string.app_no_network));
+            return;
+        }
+
         String url = EnvConstant.HOST + API_GET_USER_IFNO;
         mMyOkHttp.get()
                 .url(url)
@@ -108,6 +125,7 @@ public class UserInteractor implements UserContract.Interactor {
                         userInfo.setUsername(response.optString("Username"));
                         userInfo.setEmail(response.optString("Email"));
                         userInfo.setLogo(response.optString("Logo"));
+                        userInfo.setVerified(response.optBoolean("Verified"));
 
                         mUserInfoDao.update(userInfo);
 
@@ -134,6 +152,44 @@ public class UserInteractor implements UserContract.Interactor {
         }
 
         return null;
+    }
+
+    /**
+     * 注册
+     * @param email
+     * @param pwd
+     * @param callback
+     */
+    @Override
+    public void register(final String email, final String pwd, final UserContract.UserCallback callback) {
+        if(!NetworkUtils.checkNetworkConnect(mContext)) {
+            callback.onFailure(mContext.getString(R.string.app_no_network));
+            return;
+        }
+
+        String url = EnvConstant.HOST + API_REGISTER;
+        mMyOkHttp.post()
+                .url(url)
+                .addParam("email", email)
+                .addParam("pwd", pwd)
+                .tag(mTag)
+                .enqueue(new JsonResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, JSONObject response) {
+                        if(!response.optBoolean("Ok", false)) {
+                            callback.onFailure(response.optString("Msg"));
+                            return;
+                        }
+
+                        //自动调用登录
+                        login(email, pwd, callback);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, String error_msg) {
+                        callback.onFailure(error_msg);
+                    }
+                });
     }
 
 }
