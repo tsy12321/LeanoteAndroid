@@ -10,4 +10,15 @@
 
     <string name="permission_storage_deny_again">打开应用程序设置修改应用程序的存储权限</string>
 
+    <!--common单词-->
+    <string name="email">邮箱</string>
+    <string name="password">密码</string>
+    <string name="login">登录</string>
+    <string name="forgot_password">忘记密码?</string>
+    <string name="register">注册</string>
+
+    <!--user-->
+    <string name="user_email_empty">邮箱不能为空</string>
+    <string name="user_pwd_empty">密码不能为空</string>
+
 </resources>
