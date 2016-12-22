@@ -1,7 +1,7 @@
 package com.tsy.leanote.base;
 
-import android.app.Fragment;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 
 import com.tsy.leanote.MyApplication;
 import com.tsy.leanote.R;

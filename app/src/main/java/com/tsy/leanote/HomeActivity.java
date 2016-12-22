@@ -1,13 +1,13 @@
 package com.tsy.leanote;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -96,7 +96,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     private void switchNote() {
         toolbar.setTitle(R.string.toolbar_title_note);
 
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
         if(mNoteIndexFragment == null) {
@@ -118,7 +118,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     private void switchBlog() {
         toolbar.setTitle(R.string.toolbar_title_blog);
 
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
         if(mWebviewFragment == null) {
@@ -140,7 +140,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     private void switchLee() {
         toolbar.setTitle(R.string.toolbar_title_lee);
 
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
         if(mWebviewFragment == null) {

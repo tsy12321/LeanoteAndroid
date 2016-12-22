@@ -1,6 +1,5 @@
 package com.tsy.leanote.feature.webview;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tsy.leanote.R;
+import com.tsy.leanote.base.BaseFragment;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -17,7 +17,7 @@ import butterknife.Unbinder;
  * Created by tsy on 2016/12/22.
  */
 
-public class WebviewFragment extends Fragment {
+public class WebviewFragment extends BaseFragment {
     private View mView;
     private Unbinder mUnbinder;
 

@@ -15,13 +15,14 @@
     <string name="app_name">蚂蚁笔记</string>
     <string name="app_no_network">网络未连接</string>
 
-    <!--toolbar-->
+    <!--toolbar tab-->
     <string name="toolbar_title_note">个人笔记</string>
     <string name="toolbar_title_blog">博客</string>
     <string name="toolbar_title_lee">探索</string>
     <string name="toolbar_title_setting">设置</string>
     <string name="toolbar_title_exit">退出</string>
-
+    <string name="tab_title_note">最新</string>
+    <string name="tab_title_notebooke">笔记本</string>
 
     <!--common单词-->
     <string name="email">邮箱</string>
