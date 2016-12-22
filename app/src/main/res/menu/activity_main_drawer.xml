@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_note"
+            android:icon="@drawable/ic_tab_note"
+            android:title="@string/toolbar_title_note" />
+        <item
+            android:id="@+id/nav_blog"
+            android:icon="@drawable/ic_tab_blog"
+            android:title="@string/toolbar_title_blog" />
+        <item
+            android:id="@+id/nav_lee"
+            android:icon="@drawable/ic_tab_lee"
+            android:title="@string/toolbar_title_lee" />
+    </group>
+
+    <item android:title="@string/toolbar_title_setting">
+        <menu>
+            <item
+                android:id="@+id/nav_exit"
+                android:icon="@drawable/ic_tab_me"
+                android:title="@string/toolbar_title_exit" />
+        </menu>
+    </item>
+
+</menu>

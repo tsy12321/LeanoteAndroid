@@ -21,6 +21,7 @@
         </activity>
         <activity android:name=".feature.user.view.LoginActivity" />
         <activity android:name=".feature.user.view.RegisterActivity" />
+        <activity android:name=".feature.home.view.HomeActivity"></activity>
     </application>
 
 </manifest>

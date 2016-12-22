@@ -1,6 +1,7 @@
 package com.tsy.leanote.feature.user.contract;
 
 import com.tsy.leanote.base.BaseInteractorCallback;
+import com.tsy.leanote.base.NormalInteractorCallback;
 import com.tsy.leanote.feature.user.bean.UserInfo;
 
 /**
@@ -39,6 +40,13 @@ public interface UserContract {
          * @param callback
          */
         void register(String email, String pwd, UserCallback callback);
+
+        /**
+         * 退出
+         * @param userInfo 当前登录用户
+         * @param callback
+         */
+        void logout(UserInfo userInfo, NormalInteractorCallback callback);
     }
 
     interface UserCallback extends BaseInteractorCallback {

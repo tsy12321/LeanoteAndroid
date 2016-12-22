@@ -5,9 +5,9 @@ import android.text.method.PasswordTransformationMethod;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.tsy.leanote.MainActivity;
 import com.tsy.leanote.R;
 import com.tsy.leanote.base.BaseActivity;
+import com.tsy.leanote.feature.home.view.HomeActivity;
 import com.tsy.leanote.feature.user.bean.UserInfo;
 import com.tsy.leanote.feature.user.contract.UserContract;
 import com.tsy.leanote.feature.user.interactor.UserInteractor;
@@ -91,7 +91,7 @@ public class RegisterActivity extends BaseActivity {
         mUserInteractor.register(email, pwd, new UserContract.UserCallback() {
             @Override
             public void onSuccess(UserInfo userInfo) {
-                startActivity(MainActivity.createIntent(RegisterActivity.this));
+                startActivity(HomeActivity.createIntent(RegisterActivity.this));
             }
 
             @Override

@@ -5,17 +5,14 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/colorPrimary</item>
     </style>
 
     <style name="LoginEditText">
-        <item name="android:background">@color/white</item>
+        <item name="android:background">@android:color/white</item>
         <item name="android:maxLines">1</item>
-        <item name="android:textColor">@color/edit_text</item>
-        <item name="android:textColorHint">@color/edit_text_hint</item>
         <item name="android:padding">10dp</item>
         <item name="android:layout_marginLeft">40dp</item>
-        <item name="android:textCursorDrawable">@drawable/shape_edit_cursor</item>
         <item name="android:textSize">15sp</item>
     </style>
 

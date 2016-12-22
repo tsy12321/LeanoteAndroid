@@ -4,13 +4,16 @@ import android.content.Context;
 
 import com.tsy.leanote.MyApplication;
 import com.tsy.leanote.R;
+import com.tsy.leanote.base.NormalInteractorCallback;
 import com.tsy.leanote.constant.EnvConstant;
+import com.tsy.leanote.constant.SharePreConstant;
 import com.tsy.leanote.feature.user.bean.UserInfo;
 import com.tsy.leanote.feature.user.contract.UserContract;
 import com.tsy.leanote.greendao.UserInfoDao;
 import com.tsy.sdk.myokhttp.MyOkHttp;
 import com.tsy.sdk.myokhttp.response.JsonResponseHandler;
 import com.tsy.sdk.myutil.NetworkUtils;
+import com.tsy.sdk.myutil.SharePreferenceUtils;
 
 import org.json.JSONObject;
 
@@ -25,6 +28,7 @@ public class UserInteractor implements UserContract.Interactor {
     private final String API_LOGIN = "/api/auth/login";       //登录
     private final String API_GET_USER_IFNO = "/api/user/info";       //获取用户信息
     private final String API_REGISTER = "/api/auth/register";       //注册
+    private final String API_LOGOUT = "/api/auth/logout";       //退出注销
 
     private Object mTag;
     private Context mContext;
@@ -77,6 +81,9 @@ public class UserInteractor implements UserContract.Interactor {
 
                         mUserInfoDao.deleteAll();
                         mUserInfoDao.insert(userInfo);
+
+                        //保存最近登录email
+                        SharePreferenceUtils.putString(mContext, SharePreConstant.KEY_LAST_LOGIN_EMAIL, response.optString("Email"));
 
                         //获取一次用户信息
                         getUserInfo(userInfo.getUid(), userInfo.getToken(), callback);
@@ -183,6 +190,43 @@ public class UserInteractor implements UserContract.Interactor {
 
                         //自动调用登录
                         login(email, pwd, callback);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, String error_msg) {
+                        callback.onFailure(error_msg);
+                    }
+                });
+    }
+
+    /**
+     * 退出
+     * @param userInfo 当前登录用户
+     * @param callback
+     */
+    @Override
+    public void logout(final UserInfo userInfo, final NormalInteractorCallback callback) {
+        if(!NetworkUtils.checkNetworkConnect(mContext)) {
+            callback.onFailure(mContext.getString(R.string.app_no_network));
+            return;
+        }
+
+        String url = EnvConstant.HOST + API_LOGOUT;
+        mMyOkHttp.get()
+                .url(url)
+                .addParam("token", userInfo.getToken())
+                .tag(mTag)
+                .enqueue(new JsonResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, JSONObject response) {
+                        if(!response.optBoolean("Ok", false)) {
+                            callback.onFailure(response.optString("Msg"));
+                            return;
+                        }
+
+                        //退出
+                        mUserInfoDao.deleteAll();
+                        callback.onSuccess();
                     }
 
                     @Override

@@ -8,13 +8,15 @@ import android.text.method.PasswordTransformationMethod;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.tsy.leanote.MainActivity;
 import com.tsy.leanote.R;
 import com.tsy.leanote.base.BaseActivity;
 import com.tsy.leanote.constant.EnvConstant;
+import com.tsy.leanote.constant.SharePreConstant;
+import com.tsy.leanote.feature.home.view.HomeActivity;
 import com.tsy.leanote.feature.user.bean.UserInfo;
 import com.tsy.leanote.feature.user.contract.UserContract;
 import com.tsy.leanote.feature.user.interactor.UserInteractor;
+import com.tsy.sdk.myutil.SharePreferenceUtils;
 import com.tsy.sdk.myutil.StringUtils;
 import com.tsy.sdk.myutil.ToastUtils;
 
@@ -43,6 +45,12 @@ public class LoginActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         mUserInteractor = new UserInteractor();
+
+        String lastLoginEmail = SharePreferenceUtils.getString(getApplicationContext(), SharePreConstant.KEY_LAST_LOGIN_EMAIL);
+        if(!StringUtils.isEmpty(lastLoginEmail)) {
+            edit_username.setText(lastLoginEmail);
+            edit_username.setSelection(edit_username.length());
+        }
     }
 
     @OnClick(R.id.img_pwd_visible)
@@ -77,7 +85,7 @@ public class LoginActivity extends BaseActivity {
         mUserInteractor.login(email, pwd, new UserContract.UserCallback() {
             @Override
             public void onSuccess(UserInfo userInfo) {
-                startActivity(MainActivity.createIntent(LoginActivity.this));
+                startActivity(HomeActivity.createIntent(LoginActivity.this));
             }
 
             @Override
