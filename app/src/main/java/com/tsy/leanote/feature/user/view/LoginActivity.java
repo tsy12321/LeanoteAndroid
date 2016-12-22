@@ -12,7 +12,7 @@ import com.tsy.leanote.R;
 import com.tsy.leanote.base.BaseActivity;
 import com.tsy.leanote.constant.EnvConstant;
 import com.tsy.leanote.constant.SharePreConstant;
-import com.tsy.leanote.feature.home.view.HomeActivity;
+import com.tsy.leanote.HomeActivity;
 import com.tsy.leanote.feature.user.bean.UserInfo;
 import com.tsy.leanote.feature.user.contract.UserContract;
 import com.tsy.leanote.feature.user.interactor.UserInteractor;
