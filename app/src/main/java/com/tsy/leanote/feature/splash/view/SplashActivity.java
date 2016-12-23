@@ -4,9 +4,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import com.tsy.leanote.HomeActivity;
 import com.tsy.leanote.R;
 import com.tsy.leanote.base.BaseActivity;
-import com.tsy.leanote.HomeActivity;
 import com.tsy.leanote.feature.user.contract.UserContract;
 import com.tsy.leanote.feature.user.interactor.UserInteractor;
 import com.tsy.leanote.feature.user.view.LoginActivity;

@@ -47,6 +47,13 @@ public interface UserContract {
          * @param callback
          */
         void logout(UserInfo userInfo, NormalInteractorCallback callback);
+
+        /**
+         * 同步
+         * @param userInfo 当前登录用户
+         * @param callback
+         */
+        void sync(UserInfo userInfo, NormalInteractorCallback callback);
     }
 
     interface UserCallback extends BaseInteractorCallback {

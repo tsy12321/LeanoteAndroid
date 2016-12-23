@@ -21,10 +21,11 @@ public class UserInfo {
     private String logo;
     private String token;
     private boolean verified;       //邮箱是否认证
+    private int last_usn;       //上次同步usn
 
-    @Generated(hash = 1179477423)
+    @Generated(hash = 1860533007)
     public UserInfo(Long id, String uid, String username, String email, String logo,
-            String token, boolean verified) {
+            String token, boolean verified, int last_usn) {
         this.id = id;
         this.uid = uid;
         this.username = username;
@@ -32,6 +33,7 @@ public class UserInfo {
         this.logo = logo;
         this.token = token;
         this.verified = verified;
+        this.last_usn = last_usn;
     }
 
     @Generated(hash = 1279772520)
@@ -48,6 +50,7 @@ public class UserInfo {
                 ", logo='" + logo + '\'' +
                 ", token='" + token + '\'' +
                 ", verified=" + verified +
+                ", last_usn=" + last_usn +
                 '}';
     }
 
@@ -105,5 +108,13 @@ public class UserInfo {
 
     public void setVerified(boolean verified) {
         this.verified = verified;
+    }
+
+    public int getLast_usn() {
+        return this.last_usn;
+    }
+
+    public void setLast_usn(int last_usn) {
+        this.last_usn = last_usn;
     }
 }

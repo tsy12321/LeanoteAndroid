@@ -2,6 +2,7 @@ package com.tsy.leanote.feature.user.interactor;
 
 import android.content.Context;
 
+import com.orhanobut.logger.Logger;
 import com.tsy.leanote.MyApplication;
 import com.tsy.leanote.R;
 import com.tsy.leanote.base.NormalInteractorCallback;
@@ -29,6 +30,7 @@ public class UserInteractor implements UserContract.Interactor {
     private final String API_GET_USER_IFNO = "/api/user/info";       //获取用户信息
     private final String API_REGISTER = "/api/auth/register";       //注册
     private final String API_LOGOUT = "/api/auth/logout";       //退出注销
+    private final String API_SYNC = "/api/user/getSyncState";       //获取最新同步状态
 
     private Object mTag;
     private Context mContext;
@@ -79,7 +81,6 @@ public class UserInteractor implements UserContract.Interactor {
                         userInfo.setEmail(response.optString("Email"));
                         userInfo.setToken(response.optString("Token"));
 
-                        mUserInfoDao.deleteAll();
                         mUserInfoDao.insert(userInfo);
 
                         //保存最近登录email
@@ -133,8 +134,11 @@ public class UserInteractor implements UserContract.Interactor {
                         userInfo.setEmail(response.optString("Email"));
                         userInfo.setLogo(response.optString("Logo"));
                         userInfo.setVerified(response.optBoolean("Verified"));
+                        userInfo.setLast_usn(0);
 
                         mUserInfoDao.update(userInfo);
+
+                        Logger.i("Login success %s", userInfo);
 
                         callback.onSuccess(userInfo);
                     }
@@ -226,6 +230,43 @@ public class UserInteractor implements UserContract.Interactor {
 
                         //退出
                         mUserInfoDao.deleteAll();
+                        callback.onSuccess();
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, String error_msg) {
+                        callback.onFailure(error_msg);
+                    }
+                });
+    }
+
+    /**
+     * 同步
+     * @param userInfo 当前登录用户
+     * @param callback
+     */
+    @Override
+    public void sync(final UserInfo userInfo, final NormalInteractorCallback callback) {
+        if(!NetworkUtils.checkNetworkConnect(mContext)) {
+            callback.onFailure(mContext.getString(R.string.app_no_network));
+            return;
+        }
+
+        String url = EnvConstant.HOST + API_SYNC;
+        mMyOkHttp.get()
+                .url(url)
+                .addParam("token", userInfo.getToken())
+                .tag(mTag)
+                .enqueue(new JsonResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, JSONObject response) {
+                        if(response.has("Ok") && !response.optBoolean("Ok", false)) {
+                            callback.onFailure(response.optString("Msg"));
+                            return;
+                        }
+
+                        userInfo.setLast_usn(response.optInt("LastSyncUsn"));
+
                         callback.onSuccess();
                     }
 
