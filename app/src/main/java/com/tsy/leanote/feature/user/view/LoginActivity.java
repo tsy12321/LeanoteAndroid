@@ -8,11 +8,11 @@ import android.text.method.PasswordTransformationMethod;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.tsy.leanote.HomeActivity;
 import com.tsy.leanote.R;
 import com.tsy.leanote.base.BaseActivity;
 import com.tsy.leanote.constant.EnvConstant;
 import com.tsy.leanote.constant.SharePreConstant;
-import com.tsy.leanote.HomeActivity;
 import com.tsy.leanote.feature.user.bean.UserInfo;
 import com.tsy.leanote.feature.user.contract.UserContract;
 import com.tsy.leanote.feature.user.interactor.UserInteractor;
@@ -27,13 +27,11 @@ import butterknife.OnClick;
 public class LoginActivity extends BaseActivity {
 
     @BindView(R.id.edit_username)
-    EditText edit_username;
-
+    EditText mEditUsername;
     @BindView(R.id.edit_password)
-    EditText edit_password;
-
+    EditText mEditPassword;
     @BindView(R.id.img_pwd_visible)
-    ImageView img_pwd_visible;
+    ImageView mImgPwdVisible;
 
     private boolean mPwdVisible = false;
     private UserContract.Interactor mUserInteractor;
@@ -47,37 +45,37 @@ public class LoginActivity extends BaseActivity {
         mUserInteractor = new UserInteractor();
 
         String lastLoginEmail = SharePreferenceUtils.getString(getApplicationContext(), SharePreConstant.KEY_LAST_LOGIN_EMAIL);
-        if(!StringUtils.isEmpty(lastLoginEmail)) {
-            edit_username.setText(lastLoginEmail);
-            edit_username.setSelection(edit_username.length());
+        if (!StringUtils.isEmpty(lastLoginEmail)) {
+            mEditUsername.setText(lastLoginEmail);
+            mEditUsername.setSelection(mEditUsername.length());
         }
     }
 
     @OnClick(R.id.img_pwd_visible)
     public void pwdVisible() {
-        if(mPwdVisible) {
+        if (mPwdVisible) {
             mPwdVisible = false;
-            edit_password.setTransformationMethod(PasswordTransformationMethod.getInstance());
-            img_pwd_visible.setImageResource(R.drawable.ic_login_not_show_pwd);
+            mEditPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+            mImgPwdVisible.setImageResource(R.drawable.ic_login_not_show_pwd);
         } else {
             mPwdVisible = true;
-            edit_password.setTransformationMethod(null);
-            img_pwd_visible.setImageResource(R.drawable.ic_login_show_pwd);
+            mEditPassword.setTransformationMethod(null);
+            mImgPwdVisible.setImageResource(R.drawable.ic_login_show_pwd);
         }
-        edit_password.setSelection(edit_password.length());
+        mEditPassword.setSelection(mEditPassword.length());
     }
 
     @OnClick(R.id.btn_login)
     public void login() {
-        String email = edit_username.getText().toString();
-        String pwd = edit_password.getText().toString();
+        String email = mEditUsername.getText().toString();
+        String pwd = mEditPassword.getText().toString();
 
-        if(StringUtils.isEmpty(email)) {
+        if (StringUtils.isEmpty(email)) {
             ToastUtils.showShort(getApplicationContext(), R.string.user_email_empty);
             return;
         }
 
-        if(StringUtils.isEmpty(pwd)) {
+        if (StringUtils.isEmpty(pwd)) {
             ToastUtils.showShort(getApplicationContext(), R.string.user_pwd_empty);
             return;
         }

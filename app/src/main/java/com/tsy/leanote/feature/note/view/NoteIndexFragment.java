@@ -26,10 +26,9 @@ import butterknife.Unbinder;
 public class NoteIndexFragment extends BaseFragment {
 
     @BindView(R.id.tabs)
-    TabLayout tabs;
-
+    TabLayout mTabs;
     @BindView(R.id.viewpager)
-    ViewPager viewpager;
+    ViewPager mViewpager;
 
     private View mView;
     private Unbinder mUnbinder;
@@ -45,9 +44,9 @@ public class NoteIndexFragment extends BaseFragment {
         mUnbinder = ButterKnife.bind(this, mView);
 
         mPageAdapter = new NoteFragmentPagerAdapter(getChildFragmentManager(), getActivity().getApplicationContext());
-        viewpager.setAdapter(mPageAdapter);
-        tabs.setupWithViewPager(viewpager);
-        tabs.setTabMode(TabLayout.MODE_FIXED);
+        mViewpager.setAdapter(mPageAdapter);
+        mTabs.setupWithViewPager(mViewpager);
+        mTabs.setTabMode(TabLayout.MODE_FIXED);
 
 
         mUserInteractor = new UserInteractor(this);
