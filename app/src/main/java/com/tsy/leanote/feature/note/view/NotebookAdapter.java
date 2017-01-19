@@ -94,6 +94,11 @@ public class NotebookAdapter extends RecyclerView.Adapter<NotebookAdapter.MyView
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) holder.mImgLogo.getLayoutParams();
             layoutParams.leftMargin = DeviceUtils.dip2px(mContext, 20);
             holder.mImgLogo.setLayoutParams(layoutParams);
+        } else if(myNotebook.getDepth() >= 3) {     //最多3级缩进
+            holder.mRlBackground.setBackgroundColor(0x10000000);
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) holder.mImgLogo.getLayoutParams();
+            layoutParams.leftMargin = DeviceUtils.dip2px(mContext, 20 * (3 + 1));
+            holder.mImgLogo.setLayoutParams(layoutParams);
         } else {
             holder.mRlBackground.setBackgroundColor(0x10000000);
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) holder.mImgLogo.getLayoutParams();
