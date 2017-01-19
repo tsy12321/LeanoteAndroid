@@ -174,6 +174,22 @@ public class NoteInteractor implements NoteContract.Interactor {
                 });
     }
 
+    /**
+     * 根据notebookid获取本地所有notes
+     * @param userInfo 当前登录用户
+     * @param notebookid notebook id
+     * @return
+     */
+    @Override
+    public ArrayList<Note> getNotesByNotebookId(UserInfo userInfo, String notebookid) {
+        List<Note> notes = mNoteDao.queryBuilder()
+                .where(NoteDao.Properties.Notebookid.eq(notebookid),
+                        NoteDao.Properties.Is_trash.eq(false))
+                .list();
+
+        return (ArrayList<Note>) notes;
+    }
+
     private Note getNote(String noteid) {
         List<Note> notes = mNoteDao.queryBuilder()
                 .where(NoteDao.Properties.Noteid.eq(noteid))

@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.tsy.leanote.R;
+import com.tsy.leanote.feature.note.bean.Note;
 import com.tsy.leanote.feature.note.bean.Notebook;
 import com.tsy.sdk.myutil.DeviceUtils;
 
@@ -66,18 +67,29 @@ public class NotebookAdapter extends RecyclerView.Adapter<NotebookAdapter.MyView
 
         holder.itemView.setTag(position);
 
-        //显示类别
-        holder.mImgLogo.setImageResource(R.drawable.ic_tab_notebook);
-
         //显示title
-        String title = myNotebook.getNotebook().getTitle();
-        if(myNotebook.getChildNotebookNum() > 0) {
-            title += " (" + myNotebook.getChildNotebookNum() + ")";
+        String title = "";
+        if(myNotebook.getNotebook() != null) {
+            //显示类别
+            holder.mImgLogo.setImageResource(R.drawable.ic_tab_notebook);
+
+            //显示title
+            title = myNotebook.getNotebook().getTitle();
+            if(myNotebook.getChildNotebookNum() > 0 || myNotebook.getChildNoteNum() > 0) {
+                title += " (" + myNotebook.getChildNoteNum() + "/" + myNotebook.getChildNotebookNum() + ")";
+            }
+        } else {
+            //显示类别
+            holder.mImgLogo.setImageResource(R.drawable.ic_tab_note);
+
+            //显示title
+            title = myNotebook.getNote().getTitle();
         }
+
         holder.mName.setText(title);
 
         //open按钮
-        if(myNotebook.getChildNotebookNum() > 0) {
+        if(myNotebook.getChildNotebookNum() > 0 || myNotebook.getChildNoteNum() > 0) {
             holder.mImgArrowDown.setVisibility(View.VISIBLE);
             if(myNotebook.isOpen()) {
                 holder.mImgArrowDown.setScaleY(-1);
@@ -133,12 +145,21 @@ public class NotebookAdapter extends RecyclerView.Adapter<NotebookAdapter.MyView
     }
 
     public static class MyNotebook {
-        Notebook mNotebook;
+        Note mNote;     //可能是note
+        Notebook mNotebook;     //可能是notebook
         boolean mIsOpen = false;        //目录是否打开
         boolean mIsShow = true;     //待关闭删除的item标识
         int mDepth = 0;      //目录深度
         int mChildNotebookNum = 0;  //子notebook数量
         int mChildNoteNum = 0;      //子note数量
+
+        public Note getNote() {
+            return mNote;
+        }
+
+        public void setNote(Note note) {
+            mNote = note;
+        }
 
         public Notebook getNotebook() {
             return mNotebook;

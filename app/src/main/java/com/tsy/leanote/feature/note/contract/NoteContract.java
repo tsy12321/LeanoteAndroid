@@ -4,6 +4,7 @@ import com.tsy.leanote.base.BaseInteractorCallback;
 import com.tsy.leanote.feature.note.bean.Note;
 import com.tsy.leanote.feature.user.bean.UserInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,6 +28,14 @@ public interface NoteContract {
          * @param callback
          */
         void sync(UserInfo userInfo, GetNotesCallback callback);
+
+        /**
+         * 根据notebookid获取本地所有notes
+         * @param userInfo 当前登录用户
+         * @param notebookid notebook id
+         * @return
+         */
+        ArrayList<Note> getNotesByNotebookId(UserInfo userInfo, String notebookid);
     }
 
     interface GetNotesCallback extends BaseInteractorCallback {
