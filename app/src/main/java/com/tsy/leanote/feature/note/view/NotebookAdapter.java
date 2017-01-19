@@ -63,13 +63,29 @@ public class NotebookAdapter extends RecyclerView.Adapter<NotebookAdapter.MyView
     @Override
     public void onBindViewHolder(NotebookAdapter.MyViewHolder holder, int position) {
         MyNotebook myNotebook = mMyNotebooks.get(position);
-        holder.mName.setText(myNotebook.getNotebook().getTitle());
+
         holder.itemView.setTag(position);
-        if(myNotebook.isOpen()) {
-            holder.mImgArrowDown.setScaleY(-1);
-        } else {
-            holder.mImgArrowDown.setScaleY(1);
+
+        //显示title
+        String title = myNotebook.getNotebook().getTitle();
+        if(myNotebook.getChildNotebookNum() > 0) {
+            title += " (" + myNotebook.getChildNotebookNum() + ")";
         }
+        holder.mName.setText(title);
+
+        //open按钮
+        if(myNotebook.getChildNotebookNum() > 0) {
+            holder.mImgArrowDown.setVisibility(View.VISIBLE);
+            if(myNotebook.isOpen()) {
+                holder.mImgArrowDown.setScaleY(-1);
+            } else {
+                holder.mImgArrowDown.setScaleY(1);
+            }
+        } else {
+            holder.mImgArrowDown.setVisibility(View.GONE);
+        }
+
+        //depth缩进
         if(myNotebook.getDepth() == 0) {
             holder.mRlBackground.setBackgroundColor(0xFFFFFF);
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) holder.mName.getLayoutParams();
@@ -109,7 +125,9 @@ public class NotebookAdapter extends RecyclerView.Adapter<NotebookAdapter.MyView
         Notebook mNotebook;
         boolean mIsOpen = false;        //目录是否打开
         boolean mIsShow = true;     //待关闭删除的item标识
-        int depth = 0;      //目录深度
+        int mDepth = 0;      //目录深度
+        int mChildNotebookNum = 0;  //子notebook数量
+        int mChildNoteNum = 0;      //子note数量
 
         public Notebook getNotebook() {
             return mNotebook;
@@ -136,11 +154,27 @@ public class NotebookAdapter extends RecyclerView.Adapter<NotebookAdapter.MyView
         }
 
         public int getDepth() {
-            return depth;
+            return mDepth;
         }
 
         public void setDepth(int depth) {
-            this.depth = depth;
+            this.mDepth = depth;
+        }
+
+        public int getChildNotebookNum() {
+            return mChildNotebookNum;
+        }
+
+        public void setChildNotebookNum(int childNotebookNum) {
+            mChildNotebookNum = childNotebookNum;
+        }
+
+        public int getChildNoteNum() {
+            return mChildNoteNum;
+        }
+
+        public void setChildNoteNum(int childNoteNum) {
+            mChildNoteNum = childNoteNum;
         }
     }
 }

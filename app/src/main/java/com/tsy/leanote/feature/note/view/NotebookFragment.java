@@ -57,8 +57,7 @@ public class NotebookFragment extends BaseFragment implements NotebookAdapter.On
         //获取第一级目录
         ArrayList<Notebook> notebooks = mNotebookInteractor.getNotebooks(MyApplication.getInstance().getUserInfo(), "");
         for(int i = 0; i < notebooks.size(); i ++) {
-            NotebookAdapter.MyNotebook myNotebook = new NotebookAdapter.MyNotebook();
-            myNotebook.setNotebook(notebooks.get(i));
+            NotebookAdapter.MyNotebook myNotebook = addMyNotebook(notebooks.get(i));
             myNotebook.setDepth(0);
             mMyNotebooks.add(myNotebook);
         }
@@ -76,6 +75,10 @@ public class NotebookFragment extends BaseFragment implements NotebookAdapter.On
     @Override
     public void onItemClick(View view, int position) {
         NotebookAdapter.MyNotebook myNotebook = mMyNotebooks.get(position);
+
+        if(myNotebook.getChildNotebookNum() == 0) {
+            return;
+        }
 
         if(!myNotebook.isOpen()) {
             showChildNotebook(myNotebook.getNotebook().getNotebookid(), position, myNotebook.getDepth());
@@ -98,8 +101,7 @@ public class NotebookFragment extends BaseFragment implements NotebookAdapter.On
     private void showChildNotebook(String notebookId, int position, int depth) {
         ArrayList<Notebook> notebooks = mNotebookInteractor.getNotebooks(MyApplication.getInstance().getUserInfo(), notebookId);
         for(int i = 0; i < notebooks.size(); i ++) {
-            NotebookAdapter.MyNotebook myNotebook = new NotebookAdapter.MyNotebook();
-            myNotebook.setNotebook(notebooks.get(i));
+            NotebookAdapter.MyNotebook myNotebook = addMyNotebook(notebooks.get(i));
             myNotebook.setDepth(depth + 1);
             mMyNotebooks.add(position + i + 1, myNotebook);
         }
@@ -117,4 +119,13 @@ public class NotebookFragment extends BaseFragment implements NotebookAdapter.On
         }
     }
 
+    //根据notebook返回mynotebook
+    private NotebookAdapter.MyNotebook addMyNotebook(Notebook notebook) {
+        NotebookAdapter.MyNotebook myNotebook = new NotebookAdapter.MyNotebook();
+        myNotebook.setNotebook(notebook);
+        int childNotebookNum = mNotebookInteractor.getNotebooks(MyApplication.getInstance().getUserInfo(), notebook.getNotebookid()).size();
+        myNotebook.setChildNotebookNum(childNotebookNum);
+
+        return myNotebook;
+    }
 }
