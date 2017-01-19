@@ -5,10 +5,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.tsy.leanote.R;
 import com.tsy.leanote.feature.note.bean.Notebook;
+import com.tsy.sdk.myutil.DeviceUtils;
 
 import java.util.ArrayList;
 
@@ -59,8 +62,25 @@ public class NotebookAdapter extends RecyclerView.Adapter<NotebookAdapter.MyView
 
     @Override
     public void onBindViewHolder(NotebookAdapter.MyViewHolder holder, int position) {
-        holder.mName.setText(mMyNotebooks.get(position).getNotebook().getTitle());
+        MyNotebook myNotebook = mMyNotebooks.get(position);
+        holder.mName.setText(myNotebook.getNotebook().getTitle());
         holder.itemView.setTag(position);
+        if(myNotebook.isOpen()) {
+            holder.mImgArrowDown.setScaleY(-1);
+        } else {
+            holder.mImgArrowDown.setScaleY(1);
+        }
+        if(myNotebook.getDepth() == 0) {
+            holder.mRlBackground.setBackgroundColor(0xFFFFFF);
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) holder.mName.getLayoutParams();
+            layoutParams.leftMargin = DeviceUtils.dip2px(mContext, 20);
+            holder.mName.setLayoutParams(layoutParams);
+        } else {
+            holder.mRlBackground.setBackgroundColor(0x10000000);
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) holder.mName.getLayoutParams();
+            layoutParams.leftMargin = DeviceUtils.dip2px(mContext, 20 * (myNotebook.getDepth() + 1));
+            holder.mName.setLayoutParams(layoutParams);
+        }
     }
 
     @Override
@@ -73,6 +93,12 @@ public class NotebookAdapter extends RecyclerView.Adapter<NotebookAdapter.MyView
         @BindView(R.id.txt_name)
         TextView mName;
 
+        @BindView(R.id.img_arrow_down)
+        ImageView mImgArrowDown;
+
+        @BindView(R.id.rl_background)
+        RelativeLayout mRlBackground;
+
         MyViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
@@ -81,8 +107,9 @@ public class NotebookAdapter extends RecyclerView.Adapter<NotebookAdapter.MyView
 
     public static class MyNotebook {
         Notebook mNotebook;
-        boolean mIsOpen = false;
-        boolean mIsShow = true;
+        boolean mIsOpen = false;        //目录是否打开
+        boolean mIsShow = true;     //待关闭删除的item标识
+        int depth = 0;      //目录深度
 
         public Notebook getNotebook() {
             return mNotebook;
@@ -106,6 +133,14 @@ public class NotebookAdapter extends RecyclerView.Adapter<NotebookAdapter.MyView
 
         public void setShow(boolean show) {
             mIsShow = show;
+        }
+
+        public int getDepth() {
+            return depth;
+        }
+
+        public void setDepth(int depth) {
+            this.depth = depth;
         }
     }
 }

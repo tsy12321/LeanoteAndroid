@@ -54,12 +54,12 @@ public class NotebookFragment extends BaseFragment implements NotebookAdapter.On
         mNotebookAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mNotebookAdapter);
 
-
+        //获取第一级目录
         ArrayList<Notebook> notebooks = mNotebookInteractor.getNotebooks(MyApplication.getInstance().getUserInfo(), "");
-
         for(int i = 0; i < notebooks.size(); i ++) {
             NotebookAdapter.MyNotebook myNotebook = new NotebookAdapter.MyNotebook();
             myNotebook.setNotebook(notebooks.get(i));
+            myNotebook.setDepth(0);
             mMyNotebooks.add(myNotebook);
         }
         mNotebookAdapter.notifyDataSetChanged();
@@ -78,7 +78,7 @@ public class NotebookFragment extends BaseFragment implements NotebookAdapter.On
         NotebookAdapter.MyNotebook myNotebook = mMyNotebooks.get(position);
 
         if(!myNotebook.isOpen()) {
-            showChildNotebook(position, myNotebook.getNotebook().getNotebookid());
+            showChildNotebook(myNotebook.getNotebook().getNotebookid(), position, myNotebook.getDepth());
             myNotebook.setOpen(true);
         } else {
             hideChildNotebook(myNotebook.getNotebook().getNotebookid());
@@ -94,15 +94,18 @@ public class NotebookFragment extends BaseFragment implements NotebookAdapter.On
         mNotebookAdapter.notifyDataSetChanged();
     }
 
-    private void showChildNotebook(int position, String notebookId) {
+    //显示子notebook
+    private void showChildNotebook(String notebookId, int position, int depth) {
         ArrayList<Notebook> notebooks = mNotebookInteractor.getNotebooks(MyApplication.getInstance().getUserInfo(), notebookId);
         for(int i = 0; i < notebooks.size(); i ++) {
             NotebookAdapter.MyNotebook myNotebook = new NotebookAdapter.MyNotebook();
             myNotebook.setNotebook(notebooks.get(i));
+            myNotebook.setDepth(depth + 1);
             mMyNotebooks.add(position + i + 1, myNotebook);
         }
     }
 
+    //隐藏子notebook
     private void hideChildNotebook(String notebookId) {
         Iterator<NotebookAdapter.MyNotebook> iter = mMyNotebooks.iterator();
         while(iter.hasNext()){
