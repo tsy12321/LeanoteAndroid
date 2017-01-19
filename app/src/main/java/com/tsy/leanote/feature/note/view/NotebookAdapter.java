@@ -66,6 +66,9 @@ public class NotebookAdapter extends RecyclerView.Adapter<NotebookAdapter.MyView
 
         holder.itemView.setTag(position);
 
+        //显示类别
+        holder.mImgLogo.setImageResource(R.drawable.ic_tab_notebook);
+
         //显示title
         String title = myNotebook.getNotebook().getTitle();
         if(myNotebook.getChildNotebookNum() > 0) {
@@ -88,14 +91,14 @@ public class NotebookAdapter extends RecyclerView.Adapter<NotebookAdapter.MyView
         //depth缩进
         if(myNotebook.getDepth() == 0) {
             holder.mRlBackground.setBackgroundColor(0xFFFFFF);
-            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) holder.mName.getLayoutParams();
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) holder.mImgLogo.getLayoutParams();
             layoutParams.leftMargin = DeviceUtils.dip2px(mContext, 20);
-            holder.mName.setLayoutParams(layoutParams);
+            holder.mImgLogo.setLayoutParams(layoutParams);
         } else {
             holder.mRlBackground.setBackgroundColor(0x10000000);
-            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) holder.mName.getLayoutParams();
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) holder.mImgLogo.getLayoutParams();
             layoutParams.leftMargin = DeviceUtils.dip2px(mContext, 20 * (myNotebook.getDepth() + 1));
-            holder.mName.setLayoutParams(layoutParams);
+            holder.mImgLogo.setLayoutParams(layoutParams);
         }
     }
 
@@ -114,6 +117,9 @@ public class NotebookAdapter extends RecyclerView.Adapter<NotebookAdapter.MyView
 
         @BindView(R.id.rl_background)
         RelativeLayout mRlBackground;
+
+        @BindView(R.id.img_logo)
+        ImageView mImgLogo;
 
         MyViewHolder(View view) {
             super(view);
