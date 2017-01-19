@@ -10,10 +10,6 @@ import android.view.ViewGroup;
 
 import com.tsy.leanote.R;
 import com.tsy.leanote.base.BaseFragment;
-import com.tsy.leanote.base.NormalInteractorCallback;
-import com.tsy.leanote.feature.user.bean.UserInfo;
-import com.tsy.leanote.feature.user.contract.UserContract;
-import com.tsy.leanote.feature.user.interactor.UserInteractor;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,9 +30,6 @@ public class NoteIndexFragment extends BaseFragment {
     private Unbinder mUnbinder;
     private NoteFragmentPagerAdapter mPageAdapter;
 
-    private UserContract.Interactor mUserInteractor;
-    private UserInfo mUserInfo;
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -47,21 +40,6 @@ public class NoteIndexFragment extends BaseFragment {
         mViewpager.setAdapter(mPageAdapter);
         mTabs.setupWithViewPager(mViewpager);
         mTabs.setTabMode(TabLayout.MODE_FIXED);
-
-
-        mUserInteractor = new UserInteractor(this);
-        mUserInfo = mUserInteractor.getCurUser();
-        mUserInteractor.sync(mUserInfo, new NormalInteractorCallback() {
-            @Override
-            public void onSuccess() {
-
-            }
-
-            @Override
-            public void onFailure(String msg) {
-
-            }
-        });
 
         return mView;
     }

@@ -246,7 +246,7 @@ public class UserInteractor implements UserContract.Interactor {
      * @param callback
      */
     @Override
-    public void sync(final UserInfo userInfo, final NormalInteractorCallback callback) {
+    public void getSyncState(final UserInfo userInfo, final UserContract.GetSyncStateCallback callback) {
         if(!NetworkUtils.checkNetworkConnect(mContext)) {
             callback.onFailure(mContext.getString(R.string.app_no_network));
             return;
@@ -265,9 +265,7 @@ public class UserInteractor implements UserContract.Interactor {
                             return;
                         }
 
-                        userInfo.setLast_usn(response.optInt("LastSyncUsn"));
-
-                        callback.onSuccess();
+                        callback.onSuccess(response.optInt("LastSyncUsn"));
                     }
 
                     @Override
@@ -275,6 +273,17 @@ public class UserInteractor implements UserContract.Interactor {
                         callback.onFailure(error_msg);
                     }
                 });
+    }
+
+    /**
+     * 更新最新的同步信息
+     * @param userInfo 当前登录用户
+     * @param lastSyncUsn 最新同步usn
+     */
+    @Override
+    public void updateLastSyncUsn(UserInfo userInfo, int lastSyncUsn) {
+        userInfo.setLast_usn(lastSyncUsn);
+        mUserInfoDao.update(userInfo);
     }
 
 }

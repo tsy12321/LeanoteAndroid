@@ -117,6 +117,7 @@ public class NotebookInteractor implements NotebookContract.Interactor {
 
         String url = EnvConstant.HOST + API_SYNC;
 
+//        Log.d("tsy", "notebook do sync " + userInfo.getLast_usn());
         mMyOkHttp.get()
                 .url(url)
                 .addParam("token", userInfo.getToken())
@@ -133,6 +134,7 @@ public class NotebookInteractor implements NotebookContract.Interactor {
 
                     @Override
                     public void onSuccess(int statusCode, JSONArray response) {
+//                        Logger.json(response.toString());
                         List<Notebook> notebooks = new ArrayList<>();
 
                         for (int i = 0; i < response.length(); i ++) {

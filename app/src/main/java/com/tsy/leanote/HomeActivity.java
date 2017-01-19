@@ -1,5 +1,6 @@
 package com.tsy.leanote;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.tsy.leanote.base.BaseActivity;
 import com.tsy.leanote.base.NormalInteractorCallback;
+import com.tsy.leanote.feature.note.bean.Note;
 import com.tsy.leanote.feature.note.bean.Notebook;
 import com.tsy.leanote.feature.note.contract.NoteContract;
 import com.tsy.leanote.feature.note.contract.NotebookContract;
@@ -56,20 +58,26 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     TextView txt_username;
     TextView txt_email;
 
-    private UserContract.Interactor mUserInteractor;
     private UserInfo mUserInfo;
 
+    private UserContract.Interactor mUserInteractor;
     private NotebookContract.Interactor mNotebookInteractor;
     private NoteContract.Interactor mNoteInteractor;
 
     private NoteIndexFragment mNoteIndexFragment;
     private WebviewFragment mWebviewFragment;
 
+    private ProgressDialog mSyncProgressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
+
+        mSyncProgressDialog = new ProgressDialog(this);
+        mSyncProgressDialog.setCancelable(false);
+        mSyncProgressDialog.setMessage(getString(R.string.sync_ing));
 
         mUserInteractor = new UserInteractor(this);
         mUserInfo = mUserInteractor.getCurUser();
@@ -104,6 +112,9 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
         //Default Switch To Note
         switchNote();
+
+        //每次进入同步一次
+        doSync();
     }
 
     @Override
@@ -218,17 +229,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_sync:
-                mNotebookInteractor.getAllNotebooks(mUserInfo, new NotebookContract.GetNotebooksCallback() {
-                    @Override
-                    public void onSuccess(List<Notebook> notebooks) {
-
-                    }
-
-                    @Override
-                    public void onFailure(String msg) {
-
-                    }
-                });
+                doSync();
                 break;
         }
         return true;
@@ -241,6 +242,56 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         } else {
             super.onBackPressed();
         }
+    }
+
+    //同步
+    private void doSync() {
+        mSyncProgressDialog.show();
+
+        mUserInteractor.getSyncState(mUserInfo, new UserContract.GetSyncStateCallback() {
+            @Override
+            public void onSuccess(final int lastSyncUsn) {
+                //判断是否需要更新
+                if(mUserInfo.getLast_usn() >= lastSyncUsn) {
+                    mSyncProgressDialog.dismiss();
+                    return;
+                }
+
+                //开始同步
+                mNotebookInteractor.sync(mUserInfo, new NotebookContract.GetNotebooksCallback() {
+                    @Override
+                    public void onSuccess(List<Notebook> notebooks) {
+                        mNoteInteractor.sync(mUserInfo, new NoteContract.GetNotesCallback() {
+                            @Override
+                            public void onSuccess(List<Note> notes) {
+                                //同步成功 更新lastSyncUsn
+                                mUserInteractor.updateLastSyncUsn(mUserInfo, lastSyncUsn);
+                                mSyncProgressDialog.dismiss();
+                            }
+
+                            @Override
+                            public void onFailure(String msg) {
+                                mSyncProgressDialog.dismiss();
+                                ToastUtils.showShort(getApplicationContext(), msg);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onFailure(String msg) {
+                        mSyncProgressDialog.dismiss();
+                        ToastUtils.showShort(getApplicationContext(), msg);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(String msg) {
+                mSyncProgressDialog.dismiss();
+                ToastUtils.showShort(getApplicationContext(), msg);
+            }
+        });
+
     }
 
     private void doExit() {

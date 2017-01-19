@@ -119,6 +119,7 @@ public class NoteInteractor implements NoteContract.Interactor {
 
         String url = EnvConstant.HOST + API_SYNC;
 
+//        Log.d("tsy", "note do sync " + userInfo.getLast_usn());
         mMyOkHttp.get()
                 .url(url)
                 .addParam("token", userInfo.getToken())
@@ -135,6 +136,7 @@ public class NoteInteractor implements NoteContract.Interactor {
 
                     @Override
                     public void onSuccess(int statusCode, JSONArray response) {
+//                        Logger.json(response.toString());
                         List<Note> notes = new ArrayList<>();
 
                         for (int i = 0; i < response.length(); i ++) {

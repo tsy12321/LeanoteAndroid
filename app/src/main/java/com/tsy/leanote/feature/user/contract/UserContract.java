@@ -49,14 +49,25 @@ public interface UserContract {
         void logout(UserInfo userInfo, NormalInteractorCallback callback);
 
         /**
-         * 同步
+         * 获取最新同步状态
          * @param userInfo 当前登录用户
          * @param callback
          */
-        void sync(UserInfo userInfo, NormalInteractorCallback callback);
+        void getSyncState(UserInfo userInfo, GetSyncStateCallback callback);
+
+        /**
+         * 更新最新的同步信息
+         * @param userInfo 当前登录用户
+         * @param lastSyncUsn 最新同步usn
+         */
+        void updateLastSyncUsn(UserInfo userInfo, int lastSyncUsn);
     }
 
     interface UserCallback extends BaseInteractorCallback {
         void onSuccess(UserInfo userInfo);
+    }
+
+    interface GetSyncStateCallback extends BaseInteractorCallback {
+        void onSuccess(int lastSyncUsn);
     }
 }
