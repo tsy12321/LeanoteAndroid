@@ -3,6 +3,7 @@ package com.tsy.leanote;
 import android.app.Application;
 import android.content.Context;
 
+import com.tsy.leanote.feature.user.bean.UserInfo;
 import com.tsy.leanote.greendao.DBHelper;
 import com.tsy.leanote.greendao.DaoMaster;
 import com.tsy.leanote.greendao.DaoSession;
@@ -18,6 +19,7 @@ public class MyApplication extends Application {
     private Context mContext;
     protected MyOkHttp mMyOkHttp;
     private DaoSession mDaoSession;
+    private UserInfo mUserInfo;         //当前用户
 
     @Override
     public void onCreate() {
@@ -69,5 +71,13 @@ public class MyApplication extends Application {
      */
     public DaoSession getDaoSession() {
         return mDaoSession;
+    }
+
+    public UserInfo getUserInfo() {
+        return mUserInfo;
+    }
+
+    public void setUserInfo(UserInfo userInfo) {
+        mUserInfo = userInfo;
     }
 }

@@ -13,6 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -21,6 +22,11 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.tsy.leanote.base.BaseActivity;
 import com.tsy.leanote.base.NormalInteractorCallback;
+import com.tsy.leanote.feature.note.bean.Notebook;
+import com.tsy.leanote.feature.note.contract.NoteContract;
+import com.tsy.leanote.feature.note.contract.NotebookContract;
+import com.tsy.leanote.feature.note.interactor.NoteInteractor;
+import com.tsy.leanote.feature.note.interactor.NotebookInteractor;
 import com.tsy.leanote.feature.note.view.NoteIndexFragment;
 import com.tsy.leanote.feature.user.bean.UserInfo;
 import com.tsy.leanote.feature.user.contract.UserContract;
@@ -30,10 +36,12 @@ import com.tsy.leanote.feature.webview.WebviewFragment;
 import com.tsy.leanote.glide.CropCircleTransformation;
 import com.tsy.sdk.myutil.ToastUtils;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class HomeActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class HomeActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, Toolbar.OnMenuItemClickListener {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -51,6 +59,9 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     private UserContract.Interactor mUserInteractor;
     private UserInfo mUserInfo;
 
+    private NotebookContract.Interactor mNotebookInteractor;
+    private NoteContract.Interactor mNoteInteractor;
+
     private NoteIndexFragment mNoteIndexFragment;
     private WebviewFragment mWebviewFragment;
 
@@ -62,10 +73,15 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
         mUserInteractor = new UserInteractor(this);
         mUserInfo = mUserInteractor.getCurUser();
+        MyApplication.getInstance().setUserInfo(mUserInfo);
+
+        mNotebookInteractor = new NotebookInteractor(this);
+        mNoteInteractor = new NoteInteractor(this);
 
         //init toolbar
         toolbar.setTitle(R.string.toolbar_title_note);
         setSupportActionBar(toolbar);
+        toolbar.setOnMenuItemClickListener(this);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer_layout, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer_layout.addDrawerListener(toggle);
@@ -88,6 +104,12 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
         //Default Switch To Note
         switchNote();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     /**
@@ -189,6 +211,26 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                 break;
         }
 
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_sync:
+                mNotebookInteractor.getAllNotebooks(mUserInfo, new NotebookContract.GetNotebooksCallback() {
+                    @Override
+                    public void onSuccess(List<Notebook> notebooks) {
+
+                    }
+
+                    @Override
+                    public void onFailure(String msg) {
+
+                    }
+                });
+                break;
+        }
         return true;
     }
 

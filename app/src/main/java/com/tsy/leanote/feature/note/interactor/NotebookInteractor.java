@@ -2,6 +2,7 @@ package com.tsy.leanote.feature.note.interactor;
 
 import android.content.Context;
 
+import com.orhanobut.logger.Logger;
 import com.tsy.leanote.MyApplication;
 import com.tsy.leanote.R;
 import com.tsy.leanote.constant.EnvConstant;
@@ -73,7 +74,7 @@ public class NotebookInteractor implements NotebookContract.Interactor {
                     @Override
                     public void onSuccess(int statusCode, JSONArray response) {
                         List<Notebook> notebooks = new ArrayList<>();
-
+                        Logger.json(response.toString());
                         for (int i = 0; i < response.length(); i ++) {
                             JSONObject notebook_json = response.optJSONObject(i);
                             Notebook notebook = new Notebook();
@@ -165,6 +166,24 @@ public class NotebookInteractor implements NotebookContract.Interactor {
                         callback.onFailure(error_msg);
                     }
                 });
+    }
+
+    /**
+     * 本地数据库获取所有笔记本
+     * @param userInfo 用户
+     * @param parentNotebook 父notebook
+     * @return
+     */
+    @Override
+    public ArrayList<Notebook> getNotebooks(UserInfo userInfo, String parentNotebook) {
+        List<Notebook> notebooks = mNotebookDao.queryBuilder()
+                .where(NotebookDao.Properties.Uid.eq(userInfo.getUid()),
+                        NotebookDao.Properties.Is_deleted.eq(false),
+                        NotebookDao.Properties.Parent_notebookid.eq(parentNotebook))
+                .orderAsc(NotebookDao.Properties.Seq)
+                .list();
+
+        return (ArrayList<Notebook>) notebooks;
     }
 
     private Notebook getNotebook(String notebookid) {
