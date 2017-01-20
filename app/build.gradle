@@ -48,4 +48,5 @@ dependencies {
     compile 'com.github.yuweiguocn:GreenDaoUpgradeHelper:v1.2.0'
     compile 'com.orhanobut:logger:1.15'
     compile project(':myutil')
+    compile 'us.feras.mdv:markdownview:1.1.0'
 }

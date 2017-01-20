@@ -2,6 +2,7 @@ package com.tsy.leanote.feature.note.interactor;
 
 import android.content.Context;
 
+import com.orhanobut.logger.Logger;
 import com.tsy.leanote.MyApplication;
 import com.tsy.leanote.R;
 import com.tsy.leanote.constant.EnvConstant;
@@ -303,9 +304,14 @@ public class NoteInteractor implements NoteContract.Interactor {
                 });
     }
 
-    private Note getNote(String noteid) {
+    /**
+     * 获取Note信息
+     * @param noteId note id
+     */
+    @Override
+    public Note getNote(String noteId) {
         List<Note> notes = mNoteDao.queryBuilder()
-                .where(NoteDao.Properties.Noteid.eq(noteid))
+                .where(NoteDao.Properties.Noteid.eq(noteId))
                 .list();
         if(notes != null && notes.size() > 0) {
             return notes.get(0);

@@ -1,6 +1,5 @@
 package com.tsy.leanote.feature.note.view;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -72,7 +71,8 @@ public class NoteFragment extends BaseFragment implements NoteAdapter.OnRecycler
 
     @Override
     public void onItemClick(View view, int position) {
-        startActivity(new Intent(getActivity(), NoteViewActivity.class));
+//        Log.d("tsy", "position " + position + " noteid " + mNotes.get(position).getNoteid());
+        startActivity(NoteViewActivity.createIntent(getActivity(), mNotes.get(position).getNoteid()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

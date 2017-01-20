@@ -59,6 +59,12 @@ public interface NoteContract {
          * @param callback
          */
         void getNoteAndContent(UserInfo userInfo, String noteId, GetNoteContentCallback callback);
+
+        /**
+         * 获取Note信息
+         * @param noteId note id
+         */
+        Note getNote(String noteId);
     }
 
     interface GetNotesCallback extends BaseInteractorCallback {
