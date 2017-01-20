@@ -184,7 +184,24 @@ public class NoteInteractor implements NoteContract.Interactor {
     public ArrayList<Note> getNotesByNotebookId(UserInfo userInfo, String notebookid) {
         List<Note> notes = mNoteDao.queryBuilder()
                 .where(NoteDao.Properties.Notebookid.eq(notebookid),
-                        NoteDao.Properties.Is_trash.eq(false))
+                        NoteDao.Properties.Is_trash.eq(false),
+                        NoteDao.Properties.Title.notEq(""))
+                .list();
+
+        return (ArrayList<Note>) notes;
+    }
+
+    /**
+     * 按照更新顺序获取所有note
+     * @param userInfo 当前登录用户
+     * @return
+     */
+    @Override
+    public ArrayList<Note> getNotesOrderNewest(UserInfo userInfo) {
+        List<Note> notes = mNoteDao.queryBuilder()
+                .where(NoteDao.Properties.Is_trash.eq(false),
+                        NoteDao.Properties.Title.notEq(""))
+                .orderDesc(NoteDao.Properties.Updated_time)
                 .list();
 
         return (ArrayList<Note>) notes;

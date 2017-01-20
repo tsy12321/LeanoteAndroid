@@ -36,6 +36,13 @@ public interface NoteContract {
          * @return
          */
         ArrayList<Note> getNotesByNotebookId(UserInfo userInfo, String notebookid);
+
+        /**
+         * 按照更新顺序获取所有note
+         * @param userInfo 当前登录用户
+         * @return
+         */
+        ArrayList<Note> getNotesOrderNewest(UserInfo userInfo);
     }
 
     interface GetNotesCallback extends BaseInteractorCallback {
