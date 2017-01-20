@@ -11,9 +11,14 @@ import android.view.ViewGroup;
 import com.tsy.leanote.MyApplication;
 import com.tsy.leanote.R;
 import com.tsy.leanote.base.BaseFragment;
+import com.tsy.leanote.eventbus.SyncEvent;
 import com.tsy.leanote.feature.note.bean.Note;
 import com.tsy.leanote.feature.note.contract.NoteContract;
 import com.tsy.leanote.feature.note.interactor.NoteInteractor;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
@@ -52,8 +57,7 @@ public class NoteFragment extends BaseFragment implements NoteAdapter.OnRecycler
         mNoteAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mNoteAdapter);
 
-        mNotes.addAll(mNoteInteractor.getNotesOrderNewest(MyApplication.getInstance().getUserInfo()));
-        mNoteAdapter.notifyDataSetChanged();
+        refreshNote();
 
         return mView;
     }
@@ -67,5 +71,32 @@ public class NoteFragment extends BaseFragment implements NoteAdapter.OnRecycler
     @Override
     public void onItemClick(View view, int position) {
 
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSyncEvent(SyncEvent event) {
+        switch (event.getMsg()) {
+            case SyncEvent.MSG_SYNC:
+                refreshNote();
+                break;
+        }
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    private void refreshNote() {
+        mNotes.clear();
+        mNotes.addAll(mNoteInteractor.getNotesOrderNewest(MyApplication.getInstance().getUserInfo()));
+        mNoteAdapter.notifyDataSetChanged();
     }
 }

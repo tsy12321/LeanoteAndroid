@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.tsy.leanote.base.BaseActivity;
 import com.tsy.leanote.base.NormalInteractorCallback;
+import com.tsy.leanote.eventbus.SyncEvent;
 import com.tsy.leanote.feature.note.bean.Note;
 import com.tsy.leanote.feature.note.bean.Notebook;
 import com.tsy.leanote.feature.note.contract.NoteContract;
@@ -37,6 +38,8 @@ import com.tsy.leanote.feature.user.view.LoginActivity;
 import com.tsy.leanote.feature.webview.WebviewFragment;
 import com.tsy.leanote.glide.CropCircleTransformation;
 import com.tsy.sdk.myutil.ToastUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -267,6 +270,8 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                                 //同步成功 更新lastSyncUsn
                                 mUserInteractor.updateLastSyncUsn(mUserInfo, lastSyncUsn);
                                 mSyncProgressDialog.dismiss();
+
+                                EventBus.getDefault().post(new SyncEvent(SyncEvent.MSG_SYNC));
                             }
 
                             @Override

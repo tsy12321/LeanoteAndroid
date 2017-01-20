@@ -11,12 +11,17 @@ import android.view.ViewGroup;
 import com.tsy.leanote.MyApplication;
 import com.tsy.leanote.R;
 import com.tsy.leanote.base.BaseFragment;
+import com.tsy.leanote.eventbus.SyncEvent;
 import com.tsy.leanote.feature.note.bean.Note;
 import com.tsy.leanote.feature.note.bean.Notebook;
 import com.tsy.leanote.feature.note.contract.NoteContract;
 import com.tsy.leanote.feature.note.contract.NotebookContract;
 import com.tsy.leanote.feature.note.interactor.NoteInteractor;
 import com.tsy.leanote.feature.note.interactor.NotebookInteractor;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -59,27 +64,7 @@ public class NotebookFragment extends BaseFragment implements NotebookAdapter.On
         mNotebookAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mNotebookAdapter);
 
-        //获取第一级目录
-        ArrayList<Notebook> notebooks = mNotebookInteractor.getNotebooks(MyApplication.getInstance().getUserInfo(), "");
-        for(int i = 0; i < notebooks.size(); i ++) {
-            NotebookAdapter.MyNotebook myNotebook = new NotebookAdapter.MyNotebook();
-            myNotebook.setNotebook(notebooks.get(i));
-
-            //子notebook数量
-            int childNotebookNum = mNotebookInteractor.getNotebooks(MyApplication.getInstance().getUserInfo(),
-                    notebooks.get(i).getNotebookid()).size();
-            myNotebook.setChildNotebookNum(childNotebookNum);
-
-            //子note数量
-            int childNoteNum = mNoteInteractor.getNotesByNotebookId(MyApplication.getInstance().getUserInfo(),
-                    notebooks.get(i).getNotebookid()).size();
-            myNotebook.setChildNoteNum(childNoteNum);
-
-            //设置深度
-            myNotebook.setDepth(0);
-            mMyNotebooks.add(myNotebook);
-        }
-        mNotebookAdapter.notifyDataSetChanged();
+        refreshNotebooks();
 
         return mView;
     }
@@ -166,5 +151,51 @@ public class NotebookFragment extends BaseFragment implements NotebookAdapter.On
                 }
             }
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSyncEvent(SyncEvent event) {
+        switch (event.getMsg()) {
+            case SyncEvent.MSG_SYNC:
+                refreshNotebooks();
+                break;
+        }
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    private void refreshNotebooks() {
+        mMyNotebooks.clear();
+        //获取第一级目录
+        ArrayList<Notebook> notebooks = mNotebookInteractor.getNotebooks(MyApplication.getInstance().getUserInfo(), "");
+        for(int i = 0; i < notebooks.size(); i ++) {
+            NotebookAdapter.MyNotebook myNotebook = new NotebookAdapter.MyNotebook();
+            myNotebook.setNotebook(notebooks.get(i));
+
+            //子notebook数量
+            int childNotebookNum = mNotebookInteractor.getNotebooks(MyApplication.getInstance().getUserInfo(),
+                    notebooks.get(i).getNotebookid()).size();
+            myNotebook.setChildNotebookNum(childNotebookNum);
+
+            //子note数量
+            int childNoteNum = mNoteInteractor.getNotesByNotebookId(MyApplication.getInstance().getUserInfo(),
+                    notebooks.get(i).getNotebookid()).size();
+            myNotebook.setChildNoteNum(childNoteNum);
+
+            //设置深度
+            myNotebook.setDepth(0);
+            mMyNotebooks.add(myNotebook);
+        }
+        mNotebookAdapter.notifyDataSetChanged();
     }
 }
