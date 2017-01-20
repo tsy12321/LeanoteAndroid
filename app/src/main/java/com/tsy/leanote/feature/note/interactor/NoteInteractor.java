@@ -27,6 +27,8 @@ public class NoteInteractor implements NoteContract.Interactor {
 
     private final String API_SYNC = "/api/note/getSyncNotes";       //获取需要同步的笔记
     private final String API_GET_NOTE = "/api/note/getNotes";       //获得某笔记本下的笔记
+    private final String API_GET_NOTE_CONTENT = "/api/note/getNoteContent";       //获得某笔记内容
+    private final String API_GET_NOTE_AND_CONTENT = "/api/note/getNoteAndContent";       //获得笔记与内容
 
     private Object mTag;
     private Context mContext;
@@ -205,6 +207,100 @@ public class NoteInteractor implements NoteContract.Interactor {
                 .list();
 
         return (ArrayList<Note>) notes;
+    }
+
+    /**
+     * 获取Note内容
+     * @param userInfo 用户
+     * @param noteId note id
+     * @param callback
+     */
+    @Override
+    public void getNoteContent(UserInfo userInfo, final String noteId, final NoteContract.GetNoteContentCallback callback) {
+        if(!NetworkUtils.checkNetworkConnect(mContext)) {
+            callback.onFailure(mContext.getString(R.string.app_no_network));
+            return;
+        }
+
+        String url = EnvConstant.HOST + API_GET_NOTE_CONTENT;
+
+        mMyOkHttp.get()
+                .url(url)
+                .addParam("token", userInfo.getToken())
+                .addParam("noteId", noteId)
+                .tag(mTag)
+                .enqueue(new JsonResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, JSONObject response) {
+                        if(response.has("Ok") && !response.optBoolean("Ok", false)) {
+                            callback.onFailure(response.optString("Msg"));
+                            return;
+                        }
+
+                        Note note = getNote(noteId);
+                        note.setContent(response.optString("Content"));
+                        mNoteDao.update(note);
+
+                        callback.onSuccess(note);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, String error_msg) {
+                        callback.onFailure(error_msg);
+                    }
+                });
+    }
+
+    /**
+     * 获取Note信息和内容
+     * @param userInfo 用户
+     * @param noteId note id
+     * @param callback
+     */
+    @Override
+    public void getNoteAndContent(UserInfo userInfo, final String noteId, final NoteContract.GetNoteContentCallback callback) {
+        if(!NetworkUtils.checkNetworkConnect(mContext)) {
+            callback.onFailure(mContext.getString(R.string.app_no_network));
+            return;
+        }
+
+        String url = EnvConstant.HOST + API_GET_NOTE_AND_CONTENT;
+
+        mMyOkHttp.get()
+                .url(url)
+                .addParam("token", userInfo.getToken())
+                .addParam("noteId", noteId)
+                .tag(mTag)
+                .enqueue(new JsonResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, JSONObject response) {
+                        if(response.has("Ok") && !response.optBoolean("Ok", false)) {
+                            callback.onFailure(response.optString("Msg"));
+                            return;
+                        }
+
+                        Note note = getNote(noteId);
+                        note.setNotebookid(response.optString("NotebookId"));
+                        note.setUid(response.optString("UserId"));
+                        note.setTitle(response.optString("Title"));
+                        note.setContent(response.optString("Content"));
+                        note.setIs_markdown(response.optBoolean("IsMarkdown"));
+                        note.setIs_blog(response.optBoolean("IsBlog"));
+                        note.setIs_trash(response.optBoolean("IsTrash"));
+                        note.setCreated_time(response.optString("CreatedTime"));
+                        note.setUpdated_time(response.optString("UpdatedTime"));
+                        note.setPublic_time(response.optString("PublicTime"));
+                        note.setUsn(response.optInt("Usn"));
+                        mNoteDao.update(note);
+
+                        callback.onSuccess(note);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, String error_msg) {
+                        callback.onFailure(error_msg);
+                    }
+                });
     }
 
     private Note getNote(String noteid) {

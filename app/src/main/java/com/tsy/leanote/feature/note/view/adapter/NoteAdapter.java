@@ -1,4 +1,4 @@
-package com.tsy.leanote.feature.note.view;
+package com.tsy.leanote.feature.note.view.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

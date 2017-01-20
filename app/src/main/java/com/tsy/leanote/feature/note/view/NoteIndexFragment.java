@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.tsy.leanote.R;
 import com.tsy.leanote.base.BaseFragment;
+import com.tsy.leanote.feature.note.view.adapter.NoteFragmentPagerAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.tsy.leanote">
+          package="com.tsy.leanote">
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:name=".MyApplication"
@@ -14,14 +14,16 @@
         android:theme="@style/AppTheme">
         <activity android:name=".feature.splash.view.SplashActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".feature.user.view.LoginActivity" />
-        <activity android:name=".feature.user.view.RegisterActivity" />
-        <activity android:name=".HomeActivity"></activity>
+        <activity android:name=".feature.user.view.LoginActivity"/>
+        <activity android:name=".feature.user.view.RegisterActivity"/>
+        <activity android:name=".HomeActivity"/>
+        <activity android:name=".feature.note.view.NoteViewActivity">
+        </activity>
     </application>
 
 </manifest>

@@ -18,6 +18,7 @@ import com.tsy.leanote.feature.note.contract.NoteContract;
 import com.tsy.leanote.feature.note.contract.NotebookContract;
 import com.tsy.leanote.feature.note.interactor.NoteInteractor;
 import com.tsy.leanote.feature.note.interactor.NotebookInteractor;
+import com.tsy.leanote.feature.note.view.adapter.NotebookAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

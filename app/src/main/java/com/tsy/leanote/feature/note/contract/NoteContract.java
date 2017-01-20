@@ -43,9 +43,29 @@ public interface NoteContract {
          * @return
          */
         ArrayList<Note> getNotesOrderNewest(UserInfo userInfo);
+
+        /**
+         * 获取Note内容
+         * @param userInfo 用户
+         * @param noteId note id
+         * @param callback
+         */
+        void getNoteContent(UserInfo userInfo, String noteId, GetNoteContentCallback callback);
+
+        /**
+         * 获取Note信息和内容
+         * @param userInfo 用户
+         * @param noteId note id
+         * @param callback
+         */
+        void getNoteAndContent(UserInfo userInfo, String noteId, GetNoteContentCallback callback);
     }
 
     interface GetNotesCallback extends BaseInteractorCallback {
         void onSuccess(List<Note> notes);
+    }
+
+    interface GetNoteContentCallback extends BaseInteractorCallback {
+        void onSuccess(Note note);
     }
 }

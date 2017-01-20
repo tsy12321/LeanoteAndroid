@@ -1,4 +1,4 @@
-package com.tsy.leanote.feature.note.view;
+package com.tsy.leanote.feature.note.view.adapter;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.tsy.leanote.R;
+import com.tsy.leanote.feature.note.view.NoteFragment;
+import com.tsy.leanote.feature.note.view.NotebookFragment;
 
 /**
  * Created by tsy on 2016/12/22.

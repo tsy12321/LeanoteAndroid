@@ -1,5 +1,6 @@
 package com.tsy.leanote.feature.note.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +16,7 @@ import com.tsy.leanote.eventbus.SyncEvent;
 import com.tsy.leanote.feature.note.bean.Note;
 import com.tsy.leanote.feature.note.contract.NoteContract;
 import com.tsy.leanote.feature.note.interactor.NoteInteractor;
+import com.tsy.leanote.feature.note.view.adapter.NoteAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -70,7 +72,7 @@ public class NoteFragment extends BaseFragment implements NoteAdapter.OnRecycler
 
     @Override
     public void onItemClick(View view, int position) {
-
+        startActivity(new Intent(getActivity(), NoteViewActivity.class));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
