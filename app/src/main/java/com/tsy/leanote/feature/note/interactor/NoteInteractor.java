@@ -2,7 +2,6 @@ package com.tsy.leanote.feature.note.interactor;
 
 import android.content.Context;
 
-import com.orhanobut.logger.Logger;
 import com.tsy.leanote.MyApplication;
 import com.tsy.leanote.R;
 import com.tsy.leanote.constant.EnvConstant;
@@ -141,6 +140,7 @@ public class NoteInteractor implements NoteContract.Interactor {
                     public void onSuccess(int statusCode, JSONArray response) {
 //                        Logger.json(response.toString());
                         List<Note> notes = new ArrayList<>();
+                        NoteFileInteractor noteFileInteractor = new NoteFileInteractor();
 
                         for (int i = 0; i < response.length(); i ++) {
                             JSONObject note_json = response.optJSONObject(i);
@@ -157,6 +157,9 @@ public class NoteInteractor implements NoteContract.Interactor {
                             note.setUpdated_time(note_json.optString("UpdatedTime"));
                             note.setPublic_time(note_json.optString("PublicTime"));
                             note.setUsn(note_json.optInt("Usn"));
+
+                            //更新file
+                            noteFileInteractor.addNoteFiles(note_json.optString("NoteId"), note_json.optJSONArray("Files"));
 
                             if(userInfo.getLast_usn() > 0) {        //如果已经有则更新数据
                                 Note cur_note = getNote(note_json.optString("NoteId"));
@@ -280,6 +283,8 @@ public class NoteInteractor implements NoteContract.Interactor {
                             return;
                         }
 
+                        NoteFileInteractor noteFileInteractor = new NoteFileInteractor();
+
                         Note note = getNote(noteId);
                         note.setNotebookid(response.optString("NotebookId"));
                         note.setUid(response.optString("UserId"));
@@ -292,6 +297,8 @@ public class NoteInteractor implements NoteContract.Interactor {
                         note.setUpdated_time(response.optString("UpdatedTime"));
                         note.setPublic_time(response.optString("PublicTime"));
                         note.setUsn(response.optInt("Usn"));
+                        noteFileInteractor.addNoteFiles(noteId, response.optJSONArray("Files"));
+
                         mNoteDao.update(note);
 
                         callback.onSuccess(note);

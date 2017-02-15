@@ -1,9 +1,9 @@
 package com.tsy.leanote.feature.note.bean;
 
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Unique;
-import org.greenrobot.greendao.annotation.Generated;
 
 /**
  * Created by tsy on 2016/12/23.
@@ -26,6 +26,7 @@ public class Note {
     private String updated_time;
     private String public_time;
     private int usn;    //更新同步号
+
     @Generated(hash = 1921932240)
     public Note(Long id, String noteid, String notebookid, String uid, String title,
             String content, boolean is_markdown, boolean is_blog, boolean is_trash,
@@ -44,6 +45,26 @@ public class Note {
         this.public_time = public_time;
         this.usn = usn;
     }
+
+    @Override
+    public String toString() {
+        return "Note\n{" +
+                "\nid=" + id +
+                ", \nnoteid='" + noteid + '\'' +
+                ", \nnotebookid='" + notebookid + '\'' +
+                ", \nuid='" + uid + '\'' +
+                ", \ntitle='" + title + '\'' +
+                ", \ncontent='" + content + '\'' +
+                ", \nis_markdown=" + is_markdown +
+                ", \nis_blog=" + is_blog +
+                ", \nis_trash=" + is_trash +
+                ", \ncreated_time='" + created_time + '\'' +
+                ", \nupdated_time='" + updated_time + '\'' +
+                ", \npublic_time='" + public_time + '\'' +
+                ", \nusn=" + usn +
+                "\n}";
+    }
+
     @Generated(hash = 1272611929)
     public Note() {
     }

@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.orhanobut.logger.Logger;
 import com.tsy.leanote.base.BaseActivity;
 import com.tsy.leanote.base.NormalInteractorCallback;
 import com.tsy.leanote.eventbus.SyncEvent;
@@ -270,6 +271,8 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                                 //同步成功 更新lastSyncUsn
                                 mUserInteractor.updateLastSyncUsn(mUserInfo, lastSyncUsn);
                                 mSyncProgressDialog.dismiss();
+
+                                Logger.i("Sync Usn %s", lastSyncUsn);
 
                                 EventBus.getDefault().post(new SyncEvent(SyncEvent.MSG_SYNC));
                             }
