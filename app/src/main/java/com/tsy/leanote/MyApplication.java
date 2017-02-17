@@ -42,6 +42,20 @@ public class MyApplication extends Application {
     }
 
     private void initMyOkHttp() {
+//        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+//        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+//
+//        //持久化存储cookie
+//        ClearableCookieJar cookieJar =
+//                new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(getApplicationContext()));
+//
+//        //自定义OkHttp
+//        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+//                .cookieJar(cookieJar)       //设置开启cookie
+//                .addInterceptor(logging)            //设置开启log
+//                .build();
+//        mMyOkHttp = new MyOkHttp(okHttpClient);
+
         mMyOkHttp = new MyOkHttp();
     }
 
