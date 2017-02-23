@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/txt_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#00000000"
+            android:gravity="top"
+            android:textSize="17sp"
+            android:textColor="#111"
+            android:hint="@string/note_title"
+            android:imeActionId="@+id/login"
+            android:inputType="text"
+            android:paddingBottom="16dp"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="16dp"
+            android:scrollHorizontally="false"
+            android:maxLines="1"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.3dp"
+            android:background="@color/colorDivider"/>
+
+        <EditText
+            android:id="@+id/txt_content"
+            android:textSize="16sp"
+            android:textColor="#333"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#00000000"
+            android:gravity="top"
+            android:hint="@string/note_content"
+            android:inputType="textMultiLine|textLongMessage"
+            android:minHeight="200dp"
+            android:padding="@dimen/activity_horizontal_margin"
+            android:scrollHorizontally="false"
+            android:scrollbars="vertical"/>
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

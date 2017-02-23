@@ -50,4 +50,8 @@
     <string name="user_confirm_pwd_error">2次密码输入不一致</string>
     <string name="user_pwd_length_error">密码至少6位</string>
     <string name="user_exit_dialog_title">确认退出账号？</string>
+
+    <!--note-->
+    <string name="note_title">标题</string>
+    <string name="note_content">内容</string>
 </resources>

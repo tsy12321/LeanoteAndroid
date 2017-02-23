@@ -4,11 +4,14 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.tsy.leanote.MyApplication;
 import com.tsy.leanote.R;
@@ -18,7 +21,6 @@ import com.tsy.leanote.feature.note.contract.NoteContract;
 import com.tsy.leanote.feature.note.contract.NoteFileContract;
 import com.tsy.leanote.feature.note.interactor.NoteFileInteractor;
 import com.tsy.leanote.feature.note.interactor.NoteInteractor;
-import com.tsy.leanote.widget.MarkdownPreviewView;
 import com.tsy.sdk.myutil.StringUtils;
 import com.tsy.sdk.myutil.ToastUtils;
 
@@ -28,28 +30,50 @@ import butterknife.ButterKnife;
 public class NoteViewActivity extends BaseActivity {
 
     @BindView(R.id.toolbar)
-    Toolbar toolbar;
+    Toolbar mToolbar;
 
-    @BindView(R.id.txtTitle)
-    TextView mTxtTitle;
-
-    @BindView(R.id.markdownPreviewView)
-    MarkdownPreviewView mMarkdownPreviewView;
+    @BindView(R.id.viewpager)
+    ViewPager mViewpager;
 
     private static final String INTENT_NOTE_ID = "note_id";
 
     private NoteContract.Interactor mNoteInteractor;
     private NoteFileContract.Interactor mNoteFileInteractor;
 
+    private NoteViewPreviewFragment mNoteViewPreviewFragment;
+    private NoteViewEditorFragment mNoteViewEditorFragment;
+
     private String mNoteId;
-    private String mNoteContent = "";
     private Note mNote;
+
+    private String mCurNoteTitle = "";      //当前编辑区title
+    private String mCurNoteContent = "";    //当前编辑区content
+
+    //初始加载多张图片
     private int mTotalPics = 0;
     private int mLoadedPics = 0;
-    private boolean mContentloadFinished = false;
-    private boolean mWebloadFinished = false;
 
     private ProgressDialog mLoadProgressDialog;
+
+    public String getCurNoteTitle() {
+        return mCurNoteTitle;
+    }
+
+    public void setCurNoteTitle(String curNoteTitle) {
+        mCurNoteTitle = curNoteTitle;
+    }
+
+    public String getCurNoteContent() {
+        return mCurNoteContent;
+    }
+
+    public void setCurNoteContent(String curNoteContent) {
+        mCurNoteContent = curNoteContent;
+    }
+
+    public NoteFileContract.Interactor getNoteFileInteractor() {
+        return mNoteFileInteractor;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +85,7 @@ public class NoteViewActivity extends BaseActivity {
         mNoteFileInteractor = new NoteFileInteractor(this);
 
         initToolbar();
+        initViewPager();
 
         mLoadProgressDialog = new ProgressDialog(this);
         mLoadProgressDialog.setCancelable(false);
@@ -68,8 +93,6 @@ public class NoteViewActivity extends BaseActivity {
         //获取笔记数据
         mNoteId = getIntent().getStringExtra(INTENT_NOTE_ID);
         mNote = mNoteInteractor.getNote(mNoteId);
-
-        mTxtTitle.setText(mNote.getTitle());
 
         //获取note内容
         if(StringUtils.isEmpty(mNote.getContent())) {
@@ -79,7 +102,6 @@ public class NoteViewActivity extends BaseActivity {
                 @Override
                 public void onSuccess(Note note) {
                     mNote = note;
-                    parseContent();
                     loadPics();
                 }
 
@@ -90,26 +112,43 @@ public class NoteViewActivity extends BaseActivity {
                 }
             });
         } else {
-            parseContent();
             loadPics();
         }
-
-        mMarkdownPreviewView.setOnLoadingFinishListener(new MarkdownPreviewView.OnLoadingFinishListener() {
-            @Override
-            public void onLoadingFinish() {
-                mWebloadFinished = true;
-                refreshView();
-            }
-        });
     }
 
+    //初始化toolbar
     private void initToolbar() {
-        toolbar.setTitle("");
-        setSupportActionBar(toolbar);
+        mToolbar.setTitle("");
+        setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+    }
+
+    //初始化viewpager
+    private void initViewPager() {
+        mNoteViewPreviewFragment = new NoteViewPreviewFragment();
+        mNoteViewEditorFragment = new NoteViewEditorFragment();
+
+        mViewpager.setAdapter(new NoteViewAdapter(getSupportFragmentManager(), mNoteViewPreviewFragment, mNoteViewEditorFragment));
+        mViewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        mViewpager.setCurrentItem(0, true);
     }
 
     //加载图片 并转换markdown
@@ -119,8 +158,7 @@ public class NoteViewActivity extends BaseActivity {
             public void onStart(int totalPics, int loadedPics) {
                 if(totalPics == 0 || totalPics == loadedPics) {     //不需要加载图片
                     mLoadProgressDialog.dismiss();
-                    mContentloadFinished = true;
-                    refreshView();
+                    loadFinish();
                 } else {        //开始loading 下载中
                     mTotalPics = totalPics;
                     mLoadProgressDialog.show();
@@ -132,8 +170,7 @@ public class NoteViewActivity extends BaseActivity {
                 mLoadedPics ++;
                 if(mLoadedPics >= mTotalPics) {
                     mLoadProgressDialog.dismiss();
-                    mContentloadFinished = true;
-                    refreshView();
+                    loadFinish();
                 }
             }
 
@@ -142,30 +179,17 @@ public class NoteViewActivity extends BaseActivity {
                 mLoadedPics ++;
                 if(mLoadedPics >= mTotalPics) {
                     mLoadProgressDialog.dismiss();
-                    mContentloadFinished = true;
-                    refreshView();
+                    loadFinish();
                 }
             }
         });
     }
 
-    //把文章内容图片格式转化为本地图片格式
-    private void parseContent() {
-        mNoteContent = mNote.getContent();
-        mNoteContent = mNoteContent.replaceAll("!\\[(.*)\\]\\(http:\\/\\/leanote.com\\/file\\/outputImage\\?fileId=(.*)\\)",
-                "![$1](" + mNoteFileInteractor.getPicWebviewPath("$2") + ")");
-        mNoteContent = mNoteContent.replaceAll("!\\[(.*)\\]\\(http:\\/\\/leanote.com\\/api\\/file\\/getImage\\?fileId=(.*)\\)",
-                "![$1](" + mNoteFileInteractor.getPicWebviewPath("$2") + ")");
-        mNoteContent = mNoteContent.replaceAll("!\\[(.*)\\]\\(https:\\/\\/leanote.com\\/file\\/outputImage\\?fileId=(.*)\\)",
-                "![$1](" + mNoteFileInteractor.getPicWebviewPath("$2") + ")");
-        mNoteContent = mNoteContent.replaceAll("!\\[(.*)\\]\\(https:\\/\\/leanote.com\\/api\\/file\\/getImage\\?fileId=(.*)\\)",
-                "![$1](" + mNoteFileInteractor.getPicWebviewPath("$2") + ")");
-    }
-
-    private void refreshView() {
-        if(mContentloadFinished && mWebloadFinished) {
-            mMarkdownPreviewView.parseMarkdown(mNoteContent, true);
-        }
+    //图片加载完成
+    private void loadFinish() {
+        mCurNoteTitle = mNote.getTitle();
+        mCurNoteContent = mNote.getContent();
+        mNoteViewPreviewFragment.refreshView();
     }
 
     public static Intent createIntent(Context context, String noteId) {
@@ -188,6 +212,7 @@ public class NoteViewActivity extends BaseActivity {
                 break;
 
             case R.id.action_switch:    //切换编辑和预览状态
+                mViewpager.setCurrentItem(1-mViewpager.getCurrentItem(), true);
                 break;
 
             case R.id.action_save:    //保存
@@ -195,5 +220,31 @@ public class NoteViewActivity extends BaseActivity {
         }
 
         return true;
+    }
+
+    private static class NoteViewAdapter extends FragmentPagerAdapter {
+
+        private NoteViewPreviewFragment mNoteViewPreviewFragment;
+        private NoteViewEditorFragment mNoteViewEditorFragment;
+
+        public NoteViewAdapter(FragmentManager fm, NoteViewPreviewFragment noteViewPreviewFragment,
+                               NoteViewEditorFragment noteViewEditorFragment) {
+            super(fm);
+            mNoteViewPreviewFragment = noteViewPreviewFragment;
+            mNoteViewEditorFragment = noteViewEditorFragment;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            if (position == 0) {
+                return mNoteViewPreviewFragment;
+            }
+            return mNoteViewEditorFragment;
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
     }
 }
