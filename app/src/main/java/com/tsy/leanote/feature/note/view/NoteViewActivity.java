@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import com.tsy.leanote.MyApplication;
 import com.tsy.leanote.R;
@@ -21,6 +22,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class NoteViewActivity extends BaseActivity {
+
+    @BindView(R.id.txtTitle)
+    TextView mTxtTitle;
 
     @BindView(R.id.markdownPreviewView)
     MarkdownPreviewView mMarkdownPreviewView;
@@ -55,6 +59,8 @@ public class NoteViewActivity extends BaseActivity {
         mNoteFileInteractor = new NoteFileInteractor(this);
 
         mNote = mNoteInteractor.getNote(mNoteId);
+
+        mTxtTitle.setText(mNote.getTitle());
 
         //获取note内容
         if(StringUtils.isEmpty(mNote.getContent())) {
