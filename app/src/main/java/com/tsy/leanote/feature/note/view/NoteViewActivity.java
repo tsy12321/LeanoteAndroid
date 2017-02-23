@@ -4,6 +4,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.tsy.leanote.MyApplication;
@@ -22,6 +26,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class NoteViewActivity extends BaseActivity {
+
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
     @BindView(R.id.txtTitle)
     TextView mTxtTitle;
@@ -50,14 +57,16 @@ public class NoteViewActivity extends BaseActivity {
         setContentView(R.layout.activity_note_view);
         ButterKnife.bind(this);
 
-        mLoadProgressDialog = new ProgressDialog(this);
-        mLoadProgressDialog.setCancelable(false);
-
-        mNoteId = getIntent().getStringExtra(INTENT_NOTE_ID);
-
         mNoteInteractor = new NoteInteractor(this);
         mNoteFileInteractor = new NoteFileInteractor(this);
 
+        initToolbar();
+
+        mLoadProgressDialog = new ProgressDialog(this);
+        mLoadProgressDialog.setCancelable(false);
+
+        //获取笔记数据
+        mNoteId = getIntent().getStringExtra(INTENT_NOTE_ID);
         mNote = mNoteInteractor.getNote(mNoteId);
 
         mTxtTitle.setText(mNote.getTitle());
@@ -92,6 +101,15 @@ public class NoteViewActivity extends BaseActivity {
                 refreshView();
             }
         });
+    }
+
+    private void initToolbar() {
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     //加载图片 并转换markdown
@@ -145,7 +163,6 @@ public class NoteViewActivity extends BaseActivity {
     }
 
     private void refreshView() {
-//        mMarkdownView.loadMarkdown(mNoteContent);
         if(mContentloadFinished && mWebloadFinished) {
             mMarkdownPreviewView.parseMarkdown(mNoteContent, true);
         }
@@ -155,5 +172,28 @@ public class NoteViewActivity extends BaseActivity {
         Intent intent = new Intent(context, NoteViewActivity.class);
         intent.putExtra(INTENT_NOTE_ID, noteId);
         return intent;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_note_view, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+
+            case R.id.action_switch:    //切换编辑和预览状态
+                break;
+
+            case R.id.action_save:    //保存
+                break;
+        }
+
+        return true;
     }
 }

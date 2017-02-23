@@ -3,7 +3,7 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item android:id="@+id/action_sync"
-          android:title="sync"
-          android:icon="@drawable/ic_loop_black_24dp"
+          android:title="@string/sync"
+          android:icon="@drawable/ic_loop_white_24dp"
           app:showAsAction="ifRoom" />
 </menu>
