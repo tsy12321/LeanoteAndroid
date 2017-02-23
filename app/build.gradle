@@ -49,8 +49,7 @@ dependencies {
     compile 'com.github.yuweiguocn:GreenDaoUpgradeHelper:v1.2.0'
     compile 'com.orhanobut:logger:1.15'
     compile project(':myutil')
-    compile 'us.feras.mdv:markdownview:1.1.0'
-
+    
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 }

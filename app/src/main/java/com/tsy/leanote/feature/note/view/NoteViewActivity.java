@@ -13,17 +13,17 @@ import com.tsy.leanote.feature.note.contract.NoteContract;
 import com.tsy.leanote.feature.note.contract.NoteFileContract;
 import com.tsy.leanote.feature.note.interactor.NoteFileInteractor;
 import com.tsy.leanote.feature.note.interactor.NoteInteractor;
+import com.tsy.leanote.widget.MarkdownPreviewView;
 import com.tsy.sdk.myutil.StringUtils;
 import com.tsy.sdk.myutil.ToastUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import us.feras.mdv.MarkdownView;
 
 public class NoteViewActivity extends BaseActivity {
 
-    @BindView(R.id.markdownView)
-    MarkdownView mMarkdownView;
+    @BindView(R.id.markdownPreviewView)
+    MarkdownPreviewView mMarkdownPreviewView;
 
     private static final String INTENT_NOTE_ID = "note_id";
 
@@ -31,10 +31,12 @@ public class NoteViewActivity extends BaseActivity {
     private NoteFileContract.Interactor mNoteFileInteractor;
 
     private String mNoteId;
-    private String mNoteContent;
+    private String mNoteContent = "";
     private Note mNote;
     private int mTotalPics = 0;
     private int mLoadedPics = 0;
+    private boolean mContentloadFinished = false;
+    private boolean mWebloadFinished = false;
 
     private ProgressDialog mLoadProgressDialog;
 
@@ -76,6 +78,14 @@ public class NoteViewActivity extends BaseActivity {
             parseContent();
             loadPics();
         }
+
+        mMarkdownPreviewView.setOnLoadingFinishListener(new MarkdownPreviewView.OnLoadingFinishListener() {
+            @Override
+            public void onLoadingFinish() {
+                mWebloadFinished = true;
+                refreshView();
+            }
+        });
     }
 
     //加载图片 并转换markdown
@@ -85,6 +95,7 @@ public class NoteViewActivity extends BaseActivity {
             public void onStart(int totalPics, int loadedPics) {
                 if(totalPics == 0 || totalPics == loadedPics) {     //不需要加载图片
                     mLoadProgressDialog.dismiss();
+                    mContentloadFinished = true;
                     refreshView();
                 } else {        //开始loading 下载中
                     mTotalPics = totalPics;
@@ -97,6 +108,7 @@ public class NoteViewActivity extends BaseActivity {
                 mLoadedPics ++;
                 if(mLoadedPics >= mTotalPics) {
                     mLoadProgressDialog.dismiss();
+                    mContentloadFinished = true;
                     refreshView();
                 }
             }
@@ -106,6 +118,7 @@ public class NoteViewActivity extends BaseActivity {
                 mLoadedPics ++;
                 if(mLoadedPics >= mTotalPics) {
                     mLoadProgressDialog.dismiss();
+                    mContentloadFinished = true;
                     refreshView();
                 }
             }
@@ -126,7 +139,10 @@ public class NoteViewActivity extends BaseActivity {
     }
 
     private void refreshView() {
-        mMarkdownView.loadMarkdown(mNoteContent);
+//        mMarkdownView.loadMarkdown(mNoteContent);
+        if(mContentloadFinished && mWebloadFinished) {
+            mMarkdownPreviewView.parseMarkdown(mNoteContent, true);
+        }
     }
 
     public static Intent createIntent(Context context, String noteId) {
