@@ -2,6 +2,7 @@ package com.tsy.leanote.feature.note.view;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -54,26 +56,9 @@ public class NoteViewActivity extends BaseActivity {
     private int mLoadedPics = 0;
 
     private ProgressDialog mLoadProgressDialog;
+    private Menu mMenu;
 
-    public String getCurNoteTitle() {
-        return mCurNoteTitle;
-    }
-
-    public void setCurNoteTitle(String curNoteTitle) {
-        mCurNoteTitle = curNoteTitle;
-    }
-
-    public String getCurNoteContent() {
-        return mCurNoteContent;
-    }
-
-    public void setCurNoteContent(String curNoteContent) {
-        mCurNoteContent = curNoteContent;
-    }
-
-    public NoteFileContract.Interactor getNoteFileInteractor() {
-        return mNoteFileInteractor;
-    }
+    private boolean mHasEdit = false;   //是否编辑
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,11 +69,11 @@ public class NoteViewActivity extends BaseActivity {
         mNoteInteractor = new NoteInteractor(this);
         mNoteFileInteractor = new NoteFileInteractor(this);
 
-        initToolbar();
-        initViewPager();
-
         mLoadProgressDialog = new ProgressDialog(this);
         mLoadProgressDialog.setCancelable(false);
+
+        initToolbar();
+        initViewPager();
 
         //获取笔记数据
         mNoteId = getIntent().getStringExtra(INTENT_NOTE_ID);
@@ -140,7 +125,6 @@ public class NoteViewActivity extends BaseActivity {
 
             @Override
             public void onPageSelected(int position) {
-
             }
 
             @Override
@@ -192,6 +176,35 @@ public class NoteViewActivity extends BaseActivity {
         mNoteViewPreviewFragment.refreshView();
     }
 
+    //发生变化
+    public void setEdit() {
+        if(!mHasEdit) {
+            mHasEdit = true;
+            MenuItem saveMenuItem = mToolbar.getMenu().findItem(R.id.action_save);
+            saveMenuItem.setIcon(R.drawable.ic_action_unsave);
+        }
+    }
+
+    public String getCurNoteTitle() {
+        return mCurNoteTitle;
+    }
+
+    public void setCurNoteTitle(String curNoteTitle) {
+        mCurNoteTitle = curNoteTitle;
+    }
+
+    public String getCurNoteContent() {
+        return mCurNoteContent;
+    }
+
+    public void setCurNoteContent(String curNoteContent) {
+        mCurNoteContent = curNoteContent;
+    }
+
+    public NoteFileContract.Interactor getNoteFileInteractor() {
+        return mNoteFileInteractor;
+    }
+
     public static Intent createIntent(Context context, String noteId) {
         Intent intent = new Intent(context, NoteViewActivity.class);
         intent.putExtra(INTENT_NOTE_ID, noteId);
@@ -208,7 +221,11 @@ public class NoteViewActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
+                if(mHasEdit) {
+                    onNoSave();
+                } else {
+                    finish();
+                }
                 break;
 
             case R.id.action_switch:    //切换编辑和预览状态
@@ -220,6 +237,30 @@ public class NoteViewActivity extends BaseActivity {
         }
 
         return true;
+    }
+
+    private void onNoSave() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.note_nosave_tips);
+        builder.setNegativeButton(R.string.note_nosave_unsave, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        builder.setNeutralButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton(R.string.note_nosave_save, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.show();
     }
 
     private static class NoteViewAdapter extends FragmentPagerAdapter {

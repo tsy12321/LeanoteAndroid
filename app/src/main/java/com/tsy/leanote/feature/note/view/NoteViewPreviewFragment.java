@@ -47,7 +47,6 @@ public class NoteViewPreviewFragment extends BaseFragment {
                 refreshView();
             }
         });
-
         return mView;
     }
 

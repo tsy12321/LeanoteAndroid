@@ -54,4 +54,7 @@
     <!--note-->
     <string name="note_title">标题</string>
     <string name="note_content">内容</string>
+    <string name="note_nosave_tips">当前文件未保存，是否退出?</string>
+    <string name="note_nosave_save">保存</string>
+    <string name="note_nosave_unsave">不保存</string>
 </resources>
