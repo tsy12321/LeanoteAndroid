@@ -18,6 +18,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by tsy on 2016/12/23.
@@ -29,6 +30,7 @@ public class NoteInteractor implements NoteContract.Interactor {
     private final String API_GET_NOTE = "/api/note/getNotes";       //获得某笔记本下的笔记
     private final String API_GET_NOTE_CONTENT = "/api/note/getNoteContent";       //获得某笔记内容
     private final String API_GET_NOTE_AND_CONTENT = "/api/note/getNoteAndContent";       //获得笔记与内容
+    private final String API_UPDATE_NOTE = "/api/note/updateNote";       //更新笔记
 
     private Object mTag;
     private Context mContext;
@@ -325,5 +327,51 @@ public class NoteInteractor implements NoteContract.Interactor {
         }
 
         return null;
+    }
+
+    /**
+     * 更新Note信息
+     * @param noteId noteid
+     * @param updateArgvs 更新参数
+     * @param callback
+     */
+    @Override
+    public void updateNote(final String noteId, Map<String, String> updateArgvs, final NoteContract.UpdateNoteCallback callback) {
+        if(!NetworkUtils.checkNetworkConnect(mContext)) {
+            callback.onFailure(mContext.getString(R.string.app_no_network));
+            return;
+        }
+
+        final Note note = getNote(noteId);
+
+        String url = EnvConstant.HOST + API_UPDATE_NOTE;
+
+        updateArgvs.put("NoteId", noteId);
+        updateArgvs.put("Usn", String.valueOf(note.getUsn()));
+
+        mMyOkHttp.post()
+                .url(url)
+                .params(updateArgvs)
+                .tag(mTag)
+                .enqueue(new JsonResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, JSONObject response) {
+                        if(response.has("Ok") && !response.optBoolean("Ok", false)) {
+                            callback.onFailure(response.optString("Msg"));
+                            return;
+                        }
+
+                        Note note = getNote(noteId);
+                        note.setContent(response.optString("Content"));
+                        mNoteDao.update(note);
+
+                        callback.onSuccess(note);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, String error_msg) {
+                        callback.onFailure(error_msg);
+                    }
+                });
     }
 }

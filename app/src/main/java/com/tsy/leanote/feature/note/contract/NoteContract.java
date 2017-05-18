@@ -6,6 +6,7 @@ import com.tsy.leanote.feature.user.bean.UserInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by tsy on 2016/12/23.
@@ -65,6 +66,14 @@ public interface NoteContract {
          * @param noteId note id
          */
         Note getNote(String noteId);
+
+        /**
+         * 更新Note信息
+         * @param noteId noteid
+         * @param updateArgvs 更新参数
+         * @param callback
+         */
+        void updateNote(String noteId, Map<String, String> updateArgvs, UpdateNoteCallback callback);
     }
 
     interface GetNotesCallback extends BaseInteractorCallback {
@@ -72,6 +81,10 @@ public interface NoteContract {
     }
 
     interface GetNoteContentCallback extends BaseInteractorCallback {
+        void onSuccess(Note note);
+    }
+
+    interface UpdateNoteCallback extends BaseInteractorCallback {
         void onSuccess(Note note);
     }
 }

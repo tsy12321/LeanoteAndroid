@@ -56,7 +56,6 @@ public class NoteViewActivity extends BaseActivity {
     private int mLoadedPics = 0;
 
     private ProgressDialog mLoadProgressDialog;
-    private Menu mMenu;
 
     private boolean mHasEdit = false;   //是否编辑
 
@@ -125,6 +124,9 @@ public class NoteViewActivity extends BaseActivity {
 
             @Override
             public void onPageSelected(int position) {
+                if(position == 0) {
+                    mNoteViewPreviewFragment.refreshView();
+                }
             }
 
             @Override
@@ -221,11 +223,7 @@ public class NoteViewActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if(mHasEdit) {
-                    onNoSave();
-                } else {
-                    finish();
-                }
+                onExit();
                 break;
 
             case R.id.action_switch:    //切换编辑和预览状态
@@ -237,6 +235,19 @@ public class NoteViewActivity extends BaseActivity {
         }
 
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        onExit();
+    }
+
+    private void onExit() {
+        if(mHasEdit) {
+            onNoSave();
+        } else {
+            finish();
+        }
     }
 
     private void onNoSave() {
