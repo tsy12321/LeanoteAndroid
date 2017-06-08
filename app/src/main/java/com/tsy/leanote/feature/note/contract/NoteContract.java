@@ -69,11 +69,12 @@ public interface NoteContract {
 
         /**
          * 更新Note信息
+         * @param userInfo 用户
          * @param noteId noteid
          * @param updateArgvs 更新参数
          * @param callback
          */
-        void updateNote(String noteId, Map<String, String> updateArgvs, UpdateNoteCallback callback);
+        void updateNote(UserInfo userInfo, String noteId, Map<String, String> updateArgvs, UpdateNoteCallback callback);
     }
 
     interface GetNotesCallback extends BaseInteractorCallback {

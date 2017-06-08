@@ -336,7 +336,7 @@ public class NoteInteractor implements NoteContract.Interactor {
      * @param callback
      */
     @Override
-    public void updateNote(final String noteId, Map<String, String> updateArgvs, final NoteContract.UpdateNoteCallback callback) {
+    public void updateNote(final UserInfo userInfo, final String noteId, Map<String, String> updateArgvs, final NoteContract.UpdateNoteCallback callback) {
         if(!NetworkUtils.checkNetworkConnect(mContext)) {
             callback.onFailure(mContext.getString(R.string.app_no_network));
             return;
@@ -347,6 +347,7 @@ public class NoteInteractor implements NoteContract.Interactor {
         String url = EnvConstant.HOST + API_UPDATE_NOTE;
 
         updateArgvs.put("NoteId", noteId);
+        updateArgvs.put("token", userInfo.getToken());
         updateArgvs.put("Usn", String.valueOf(note.getUsn()));
 
         mMyOkHttp.post()
@@ -361,11 +362,17 @@ public class NoteInteractor implements NoteContract.Interactor {
                             return;
                         }
 
-                        Note note = getNote(noteId);
-                        note.setContent(response.optString("Content"));
-                        mNoteDao.update(note);
+                        getNoteAndContent(userInfo, noteId, new NoteContract.GetNoteContentCallback() {
+                            @Override
+                            public void onSuccess(Note note) {
+                                callback.onSuccess(note);
+                            }
 
-                        callback.onSuccess(note);
+                            @Override
+                            public void onFailure(String msg) {
+                                callback.onFailure(msg);
+                            }
+                        });
                     }
 
                     @Override

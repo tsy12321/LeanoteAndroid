@@ -64,7 +64,7 @@ public class NoteViewEditorFragment extends BaseFragment {
         @Override
         public void onTextChanged(CharSequence s, int start, int before,
                                   int count) {
-            mNoteViewActivity.setEdit();
+            mNoteViewActivity.setEdit(true);
             mNoteViewActivity.setCurNoteTitle(mTxtTitle.getText().toString());
             mNoteViewActivity.setCurNoteContent(mTxtContent.getText().toString());
         }

@@ -57,4 +57,7 @@
     <string name="note_nosave_tips">当前文件未保存，是否退出?</string>
     <string name="note_nosave_save">保存</string>
     <string name="note_nosave_unsave">不保存</string>
+    <string name="note_save_success">保存成功</string>
+    <string name="note_save_fail">保存失败</string>
+    <string name="note_save_conflict">笔记有冲突，请先更新再保存</string>
 </resources>

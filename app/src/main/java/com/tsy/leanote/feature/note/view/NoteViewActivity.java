@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import com.tsy.leanote.MyApplication;
 import com.tsy.leanote.R;
 import com.tsy.leanote.base.BaseActivity;
+import com.tsy.leanote.eventbus.SyncEvent;
 import com.tsy.leanote.feature.note.bean.Note;
 import com.tsy.leanote.feature.note.contract.NoteContract;
 import com.tsy.leanote.feature.note.contract.NoteFileContract;
@@ -25,6 +26,11 @@ import com.tsy.leanote.feature.note.interactor.NoteFileInteractor;
 import com.tsy.leanote.feature.note.interactor.NoteInteractor;
 import com.tsy.sdk.myutil.StringUtils;
 import com.tsy.sdk.myutil.ToastUtils;
+
+import org.greenrobot.eventbus.EventBus;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -179,11 +185,17 @@ public class NoteViewActivity extends BaseActivity {
     }
 
     //发生变化
-    public void setEdit() {
-        if(!mHasEdit) {
+    public void setEdit(Boolean edit) {
+        if(edit && !mHasEdit) {
             mHasEdit = true;
             MenuItem saveMenuItem = mToolbar.getMenu().findItem(R.id.action_save);
             saveMenuItem.setIcon(R.drawable.ic_action_unsave);
+        }
+
+        if(!edit && mHasEdit) {
+            mHasEdit = false;
+            MenuItem saveMenuItem = mToolbar.getMenu().findItem(R.id.action_save);
+            saveMenuItem.setIcon(R.drawable.ic_action_save);
         }
     }
 
@@ -231,6 +243,7 @@ public class NoteViewActivity extends BaseActivity {
                 break;
 
             case R.id.action_save:    //保存
+                save(false);
                 break;
         }
 
@@ -268,10 +281,45 @@ public class NoteViewActivity extends BaseActivity {
         builder.setPositiveButton(R.string.note_nosave_save, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
+                save(true);
             }
         });
         builder.show();
+    }
+
+    private void save(final Boolean exit) {
+        if(!mHasEdit) {
+            return;
+        }
+        Map<String, String> updateArgvs = new HashMap<>();
+        updateArgvs.put("Title", mCurNoteTitle);
+        updateArgvs.put("Content", mCurNoteContent);
+
+        mLoadProgressDialog.show();
+        mNoteInteractor.updateNote(MyApplication.getInstance().getUserInfo(), mNoteId, updateArgvs, new NoteContract.UpdateNoteCallback() {
+            @Override
+            public void onSuccess(Note note) {
+                mLoadProgressDialog.dismiss();
+                ToastUtils.showShort(getApplicationContext(), R.string.note_save_success);
+                setEdit(false);
+
+                EventBus.getDefault().post(new SyncEvent(SyncEvent.MSG_SYNC));
+
+                if(exit) {
+                    finish();
+                }
+            }
+
+            @Override
+            public void onFailure(String msg) {
+                mLoadProgressDialog.dismiss();
+                if(msg.equals("conflict")) {
+                    ToastUtils.showShort(getApplicationContext(), R.string.note_save_conflict);
+                } else {
+                    ToastUtils.showShort(getApplicationContext(), msg);
+                }
+            }
+        });
     }
 
     private static class NoteViewAdapter extends FragmentPagerAdapter {
