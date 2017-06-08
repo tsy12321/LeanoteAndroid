@@ -9,8 +9,13 @@ import android.widget.TextView;
 
 import com.tsy.leanote.R;
 import com.tsy.leanote.base.BaseFragment;
+import com.tsy.leanote.eventbus.NoteEvent;
 import com.tsy.leanote.feature.note.contract.NoteFileContract;
 import com.tsy.leanote.widget.MarkdownPreviewView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,6 +39,18 @@ public class NoteViewPreviewFragment extends BaseFragment {
 
     private boolean mWebLoaded = false;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -47,6 +64,7 @@ public class NoteViewPreviewFragment extends BaseFragment {
                 refreshView();
             }
         });
+
         return mView;
     }
 
@@ -54,6 +72,16 @@ public class NoteViewPreviewFragment extends BaseFragment {
     public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onNoteEvent(NoteEvent event) {
+        switch (event.getMsg()) {
+            case NoteEvent.MSG_INIT:
+            case NoteEvent.MSG_EDITOR:
+                refreshView();
+                break;
+        }
     }
 
     //刷新preview页面

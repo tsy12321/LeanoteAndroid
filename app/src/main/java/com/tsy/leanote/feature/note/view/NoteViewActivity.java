@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import com.tsy.leanote.MyApplication;
 import com.tsy.leanote.R;
 import com.tsy.leanote.base.BaseActivity;
+import com.tsy.leanote.eventbus.NoteEvent;
 import com.tsy.leanote.eventbus.SyncEvent;
 import com.tsy.leanote.feature.note.bean.Note;
 import com.tsy.leanote.feature.note.contract.NoteContract;
@@ -122,24 +123,6 @@ public class NoteViewActivity extends BaseActivity {
         mNoteViewEditorFragment = new NoteViewEditorFragment();
 
         mViewpager.setAdapter(new NoteViewAdapter(getSupportFragmentManager(), mNoteViewPreviewFragment, mNoteViewEditorFragment));
-        mViewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                if(position == 0) {
-                    mNoteViewPreviewFragment.refreshView();
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
         mViewpager.setCurrentItem(0, true);
     }
 
@@ -181,7 +164,8 @@ public class NoteViewActivity extends BaseActivity {
     private void loadFinish() {
         mCurNoteTitle = mNote.getTitle();
         mCurNoteContent = mNote.getContent();
-        mNoteViewPreviewFragment.refreshView();
+
+        EventBus.getDefault().post(new NoteEvent(NoteEvent.MSG_INIT));
     }
 
     //发生变化

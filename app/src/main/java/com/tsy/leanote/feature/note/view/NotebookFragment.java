@@ -80,6 +80,11 @@ public class NotebookFragment extends BaseFragment implements NotebookAdapter.On
     public void onItemClick(View view, int position) {
         NotebookAdapter.MyNotebook myNotebook = mMyNotebooks.get(position);
 
+        if(myNotebook.getNote() != null) {
+            startActivity(NoteViewActivity.createIntent(getActivity(), myNotebook.getNote().getNoteid()));
+            return;
+        }
+
         if(myNotebook.getChildNotebookNum() == 0 && myNotebook.getChildNoteNum() == 0) {
             return;
         }
