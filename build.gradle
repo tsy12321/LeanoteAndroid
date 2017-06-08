@@ -9,6 +9,8 @@ buildscript {
         classpath 'com.jakewharton:butterknife-gradle-plugin:8.4.0'
         classpath 'org.greenrobot:greendao-gradle-plugin:3.2.0'
         classpath 'com.antfortune.freeline:gradle:0.8.3'
+        // retro lambda
+        classpath 'me.tatarka:gradle-retrolambda:3.2.4'
     }
 }
 

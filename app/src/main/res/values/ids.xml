@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2016. SHENQINCI(沈钦赐)<dev@qinc.me>
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+    <!--编辑操作的id-->
+    <item name="id_shortcut_console" type="id"/><!-- 代码行 -->
+    <item name="id_shortcut_format_header_1" type="id"/><!-- -->
+    <item name="id_shortcut_format_header_2" type="id"/><!-- -->
+    <item name="id_shortcut_format_header_3" type="id"/><!-- -->
+    <item name="id_shortcut_format_header_4" type="id"/><!-- -->
+    <item name="id_shortcut_format_header_5" type="id"/><!-- -->
+    <item name="id_shortcut_format_header_6" type="id"/><!--  -->
+    <item name="id_shortcut_format_italic" type="id"/><!-- 斜体 -->
+    <item name="id_shortcut_format_bold" type="id"/><!-- 粗体 -->
+    <item name="id_shortcut_list_bulleted" type="id"/><!-- 列表 -->
+    <item name="id_shortcut_format_numbers" type="id"/><!-- 数字列表  -->
+    <item name="id_shortcut_format_quote" type="id"/><!--引用-->
+    <item name="id_shortcut_format_strikethrough" type="id"/><!-- 字体划线 -->
+    <item name="id_shortcut_grid" type="id"/><!-- 插入表格 -->
+    <item name="id_shortcut_insert_link" type="id"/><!-- 插入链接 -->
+    <item name="id_shortcut_insert_photo" type="id"/><!-- 插入图片 -->
+    <item name="id_shortcut_minus" type="id"/><!-- 分割线 -->
+    <item name="id_shortcut_xml" type="id"/><!-- 代码 -->
+
+</resources>

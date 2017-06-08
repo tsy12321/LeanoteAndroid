@@ -2,13 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!--<item-->
-        <!--android:id="@+id/action_other_operate"-->
-        <!--android:title="@string/menu_other_operate"-->
-        <!--android:icon="@drawable/ic_add_white_24dp"-->
-        <!--android:orderInCategory="1"-->
-        <!--app:showAsAction="always"/>-->
-
+    <item
+        android:id="@+id/action_other_operate"
+        android:title="@string/menu_other_operate"
+        android:icon="@drawable/ic_add_white_24dp"
+        android:orderInCategory="9"
+        app:showAsAction="always"/>
 
     <item
         android:id="@+id/action_switch"

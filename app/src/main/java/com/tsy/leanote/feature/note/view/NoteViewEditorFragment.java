@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,7 @@ import com.tsy.leanote.MyApplication;
 import com.tsy.leanote.R;
 import com.tsy.leanote.base.BaseFragment;
 import com.tsy.leanote.eventbus.NoteEvent;
+import com.tsy.leanote.feature.note.engine.PerformEditable;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -40,6 +40,8 @@ public class NoteViewEditorFragment extends BaseFragment {
     private View mView;
     private Unbinder mUnbinder;
     private NoteViewActivity mNoteViewActivity;
+
+    private PerformEditable mPerformEditable;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,6 +69,9 @@ public class NoteViewEditorFragment extends BaseFragment {
 
         mTxtTitle.addTextChangedListener(textWatcher);
         mTxtContent.addTextChangedListener(textWatcher);
+
+        //代码格式化或者插入操作
+        mPerformEditable = new PerformEditable(mTxtContent);
 
         return mView;
     }
@@ -129,5 +134,9 @@ public class NoteViewEditorFragment extends BaseFragment {
         if (imm != null && !isVisibleToUser) {
             imm.hideSoftInputFromWindow(mView.getWindowToken(), 0);
         }
+    }
+
+    public PerformEditable getPerformEditable() {
+        return mPerformEditable;
     }
 }

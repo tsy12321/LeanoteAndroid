@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -12,8 +13,11 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 
 import com.tsy.leanote.MyApplication;
 import com.tsy.leanote.R;
@@ -25,8 +29,11 @@ import com.tsy.leanote.feature.note.contract.NoteContract;
 import com.tsy.leanote.feature.note.contract.NoteFileContract;
 import com.tsy.leanote.feature.note.interactor.NoteFileInteractor;
 import com.tsy.leanote.feature.note.interactor.NoteInteractor;
+import com.tsy.leanote.widget.TabIconView;
 import com.tsy.sdk.myutil.StringUtils;
 import com.tsy.sdk.myutil.ToastUtils;
+
+import net.cachapa.expandablelayout.ExpandableLayout;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -36,13 +43,18 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class NoteViewActivity extends BaseActivity {
+public class NoteViewActivity extends BaseActivity implements View.OnClickListener{
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
     @BindView(R.id.viewpager)
     ViewPager mViewpager;
+
+    @BindView(R.id.action_other_operate)
+    protected ExpandableLayout mExpandLayout;
+
+    private TabIconView mTabIconView;
 
     private static final String INTENT_NOTE_ID = "note_id";
 
@@ -66,6 +78,8 @@ public class NoteViewActivity extends BaseActivity {
 
     private boolean mHasEdit = false;   //是否编辑
 
+    private final int SYSTEM_GALLERY = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +94,7 @@ public class NoteViewActivity extends BaseActivity {
 
         initToolbar();
         initViewPager();
+        initTab();
 
         //获取笔记数据
         mNoteId = getIntent().getStringExtra(INTENT_NOTE_ID);
@@ -124,6 +139,29 @@ public class NoteViewActivity extends BaseActivity {
 
         mViewpager.setAdapter(new NoteViewAdapter(getSupportFragmentManager(), mNoteViewPreviewFragment, mNoteViewEditorFragment));
         mViewpager.setCurrentItem(0, true);
+    }
+
+    //加载tab
+    private void initTab() {
+        mTabIconView = (TabIconView) findViewById(R.id.tabIconView);
+        mTabIconView.addTab(R.drawable.ic_shortcut_format_list_bulleted, R.id.id_shortcut_list_bulleted, this);
+        mTabIconView.addTab(R.drawable.ic_shortcut_format_list_numbers, R.id.id_shortcut_format_numbers, this);
+        mTabIconView.addTab(R.drawable.ic_shortcut_insert_link, R.id.id_shortcut_insert_link, this);
+        mTabIconView.addTab(R.drawable.ic_shortcut_insert_photo, R.id.id_shortcut_insert_photo, this);
+        mTabIconView.addTab(R.drawable.ic_shortcut_console, R.id.id_shortcut_console, this);
+        mTabIconView.addTab(R.drawable.ic_shortcut_format_bold, R.id.id_shortcut_format_bold, this);
+        mTabIconView.addTab(R.drawable.ic_shortcut_format_italic, R.id.id_shortcut_format_italic, this);
+        mTabIconView.addTab(R.drawable.ic_shortcut_format_header_1, R.id.id_shortcut_format_header_1, this);
+        mTabIconView.addTab(R.drawable.ic_shortcut_format_header_2, R.id.id_shortcut_format_header_2, this);
+        mTabIconView.addTab(R.drawable.ic_shortcut_format_header_3, R.id.id_shortcut_format_header_3, this);
+        mTabIconView.addTab(R.drawable.ic_shortcut_format_quote, R.id.id_shortcut_format_quote, this);
+        mTabIconView.addTab(R.drawable.ic_shortcut_xml, R.id.id_shortcut_xml, this);
+        mTabIconView.addTab(R.drawable.ic_shortcut_minus, R.id.id_shortcut_minus, this);
+        mTabIconView.addTab(R.drawable.ic_shortcut_format_strikethrough, R.id.id_shortcut_format_strikethrough, this);
+        mTabIconView.addTab(R.drawable.ic_shortcut_grid, R.id.id_shortcut_grid, this);
+        mTabIconView.addTab(R.drawable.ic_shortcut_format_header_4, R.id.id_shortcut_format_header_4, this);
+        mTabIconView.addTab(R.drawable.ic_shortcut_format_header_5, R.id.id_shortcut_format_header_5, this);
+        mTabIconView.addTab(R.drawable.ic_shortcut_format_header_6, R.id.id_shortcut_format_header_6, this);
     }
 
     //加载图片 并转换markdown
@@ -218,6 +256,17 @@ public class NoteViewActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_other_operate://展开和收缩
+                if (!mExpandLayout.isExpanded()) {
+                    //没有展开，但是接下来就是展开，设置向上箭头
+                    item.setIcon(R.drawable.ic_arrow_up);
+                }
+                else {
+                    item.setIcon(R.drawable.ic_add_white_24dp);
+                }
+                mExpandLayout.toggle();
+                break;
+
             case android.R.id.home:
                 onExit();
                 break;
@@ -306,6 +355,27 @@ public class NoteViewActivity extends BaseActivity {
         });
     }
 
+    @Override
+    public void onClick(View v) {
+        if (R.id.id_shortcut_insert_photo == v.getId()) {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_PICK);// Pick an item fromthe
+            intent.setType("image/*");// 从所有图片中进行选择
+            startActivityForResult(intent, SYSTEM_GALLERY);
+            return;
+        } else if (R.id.id_shortcut_insert_link == v.getId()) {
+            //插入链接
+            insertLink();
+            return;
+        } else if (R.id.id_shortcut_grid == v.getId()) {
+            //插入表格
+            insertTable();
+            return;
+        }
+        //点击事件分发
+        mNoteViewEditorFragment.getPerformEditable().onClick(v);
+    }
+
     private static class NoteViewAdapter extends FragmentPagerAdapter {
 
         private NoteViewPreviewFragment mNoteViewPreviewFragment;
@@ -330,5 +400,97 @@ public class NoteViewActivity extends BaseActivity {
         public int getCount() {
             return 2;
         }
+    }
+
+    /**
+     * 插入表格
+     */
+    private void insertTable() {
+        View rootView = LayoutInflater.from(this).inflate(R.layout.view_common_input_table_view, null);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("插入表格")
+                .setView(rootView)
+                .show();
+
+        TextInputLayout rowNumberHint = (TextInputLayout) rootView.findViewById(R.id.rowNumberHint);
+        TextInputLayout columnNumberHint = (TextInputLayout) rootView.findViewById(R.id.columnNumberHint);
+        EditText rowNumber = (EditText) rootView.findViewById(R.id.rowNumber);
+        EditText columnNumber = (EditText) rootView.findViewById(R.id.columnNumber);
+
+
+        rootView.findViewById(R.id.sure).setOnClickListener(v -> {
+            String rowNumberStr = rowNumber.getText().toString().trim();
+            String columnNumberStr = columnNumber.getText().toString().trim();
+
+            if (StringUtils.isEmpty(rowNumberStr)) {
+                rowNumberHint.setError("不能为空");
+                return;
+            }
+            if (StringUtils.isEmpty(columnNumberStr)) {
+                columnNumberHint.setError("不能为空");
+                return;
+            }
+
+
+            if (rowNumberHint.isErrorEnabled())
+                rowNumberHint.setErrorEnabled(false);
+            if (columnNumberHint.isErrorEnabled())
+                columnNumberHint.setErrorEnabled(false);
+
+            mNoteViewEditorFragment.getPerformEditable().perform(R.id.id_shortcut_grid, Integer.parseInt(rowNumberStr), Integer.parseInt(columnNumberStr));
+            dialog.dismiss();
+        });
+        rootView.findViewById(R.id.cancel).setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
+    /**
+     * 插入链接
+     */
+    private void insertLink() {
+        View rootView = LayoutInflater.from(this).inflate(R.layout.view_common_input_link_view, null);
+
+        AlertDialog dialog = new AlertDialog.Builder(this, R.style.DialogTheme)
+                .setTitle("插入链接")
+                .setView(rootView)
+                .show();
+
+        TextInputLayout titleHint = (TextInputLayout) rootView.findViewById(R.id.inputNameHint);
+        TextInputLayout linkHint = (TextInputLayout) rootView.findViewById(R.id.inputHint);
+        EditText title = (EditText) rootView.findViewById(R.id.name);
+        EditText link = (EditText) rootView.findViewById(R.id.text);
+
+
+        rootView.findViewById(R.id.sure).setOnClickListener(v -> {
+            String titleStr = title.getText().toString().trim();
+            String linkStr = link.getText().toString().trim();
+
+            if (StringUtils.isEmpty(titleStr)) {
+                titleHint.setError("不能为空");
+                return;
+            }
+            if (StringUtils.isEmpty(linkStr)) {
+                linkHint.setError("不能为空");
+                return;
+            }
+
+            if (titleHint.isErrorEnabled())
+                titleHint.setErrorEnabled(false);
+            if (linkHint.isErrorEnabled())
+                linkHint.setErrorEnabled(false);
+
+            mNoteViewEditorFragment.getPerformEditable().perform(R.id.id_shortcut_insert_link, titleStr, linkStr);
+            dialog.dismiss();
+        });
+
+        rootView.findViewById(R.id.cancel).setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+
+        dialog.show();
     }
 }

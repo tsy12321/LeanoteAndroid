@@ -3,6 +3,9 @@ apply plugin: 'com.jakewharton.butterknife'
 apply plugin: 'org.greenrobot.greendao'
 apply plugin: 'com.antfortune.freeline'
 
+// lambda
+apply plugin: 'me.tatarka.retrolambda'
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
@@ -20,7 +23,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     greendao {
         schemaVersion 1
         daoPackage 'com.tsy.leanote.greendao'
@@ -49,7 +55,8 @@ dependencies {
     compile 'com.github.yuweiguocn:GreenDaoUpgradeHelper:v1.2.0'
     compile 'com.orhanobut:logger:1.15'
     compile project(':myutil')
-    
+    compile 'net.cachapa.expandablelayout:expandablelayout:2.9.1'
+
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 }
