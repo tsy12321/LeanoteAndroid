@@ -13,6 +13,7 @@ import com.tsy.leanote.greendao.NotebookDao;
 import com.tsy.sdk.myokhttp.MyOkHttp;
 import com.tsy.sdk.myokhttp.response.JsonResponseHandler;
 import com.tsy.sdk.myutil.NetworkUtils;
+import com.tsy.sdk.myutil.StringUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -186,6 +187,37 @@ public class NotebookInteractor implements NotebookContract.Interactor {
                 .list();
 
         return (ArrayList<Notebook>) notebooks;
+    }
+
+    /**
+     * 获取笔记本目录
+     * @param notebookid
+     * @return
+     */
+    @Override
+    public String getNotebookPath(String notebookid) {
+        if(StringUtils.isEmpty(notebookid)) {
+            return "/";
+        }
+
+        Notebook notebook = getNotebook(notebookid);
+        if(notebook == null) {
+            return "/";
+        }
+
+        String path = "";
+
+        while(notebook != null) {
+            path =  "/" + notebook.getTitle() + path;
+
+            if(StringUtils.isEmpty(notebook.getParent_notebookid())) {
+                break;
+            }
+
+            notebook = getNotebook(notebook.getParent_notebookid());
+        }
+
+        return path;
     }
 
     private Notebook getNotebook(String notebookid) {

@@ -56,7 +56,8 @@ dependencies {
     compile 'com.orhanobut:logger:1.15'
     compile project(':myutil')
     compile 'net.cachapa.expandablelayout:expandablelayout:2.9.1'
-
+//    compile 'com.github.clans:fab:1.6.4'
+    
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 }

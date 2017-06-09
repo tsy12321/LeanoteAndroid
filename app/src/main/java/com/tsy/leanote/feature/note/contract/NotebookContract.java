@@ -35,6 +35,13 @@ public interface NotebookContract {
          * @return
          */
         ArrayList<Notebook> getNotebooks(UserInfo userInfo, String parentNotebook);
+
+        /**
+         * 获取笔记本目录
+         * @param notebookid
+         * @return
+         */
+        String getNotebookPath(String notebookid);
     }
 
     interface GetNotebooksCallback extends BaseInteractorCallback {

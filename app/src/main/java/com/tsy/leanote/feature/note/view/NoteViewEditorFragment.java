@@ -10,12 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.tsy.leanote.MyApplication;
 import com.tsy.leanote.R;
 import com.tsy.leanote.base.BaseFragment;
 import com.tsy.leanote.eventbus.NoteEvent;
 import com.tsy.leanote.feature.note.engine.PerformEditable;
+import com.tsy.sdk.myutil.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -36,6 +38,9 @@ public class NoteViewEditorFragment extends BaseFragment {
 
     @BindView(R.id.txt_content)
     EditText mTxtContent;
+
+    @BindView(R.id.txt_notebookpath)
+    TextView mTxtNotebookpath;
 
     private View mView;
     private Unbinder mUnbinder;
@@ -63,9 +68,7 @@ public class NoteViewEditorFragment extends BaseFragment {
 
         mNoteViewActivity = (NoteViewActivity) getActivity();
 
-        mTxtTitle.setText(mNoteViewActivity.getCurNoteTitle());
-        mTxtTitle.setSelection(mTxtTitle.getText().length());
-        mTxtContent.setText(mNoteViewActivity.getCurNoteContent());
+        refreshView();
 
         mTxtTitle.addTextChangedListener(textWatcher);
         mTxtContent.addTextChangedListener(textWatcher);
@@ -87,13 +90,22 @@ public class NoteViewEditorFragment extends BaseFragment {
                 mTxtTitle.removeTextChangedListener(textWatcher);
                 mTxtContent.removeTextChangedListener(textWatcher);
 
-                mTxtTitle.setText(mNoteViewActivity.getCurNoteTitle());
-                mTxtTitle.setSelection(mTxtTitle.getText().length());
-                mTxtContent.setText(mNoteViewActivity.getCurNoteContent());
+                refreshView();
 
                 mTxtTitle.addTextChangedListener(textWatcher);
                 mTxtContent.addTextChangedListener(textWatcher);
                 break;
+        }
+    }
+
+    private void refreshView() {
+        mTxtTitle.setText(mNoteViewActivity.getCurNoteTitle());
+        mTxtTitle.setSelection(mTxtTitle.getText().length());
+        mTxtContent.setText(mNoteViewActivity.getCurNoteContent());
+        if(StringUtils.isEmpty(mNoteViewActivity.getCurNotebookpath())) {
+            mTxtNotebookpath.setText(R.string.note_choose_notebook);
+        } else {
+            mTxtNotebookpath.setText(mNoteViewActivity.getCurNotebookpath());
         }
     }
 

@@ -27,8 +27,10 @@ import com.tsy.leanote.eventbus.SyncEvent;
 import com.tsy.leanote.feature.note.bean.Note;
 import com.tsy.leanote.feature.note.contract.NoteContract;
 import com.tsy.leanote.feature.note.contract.NoteFileContract;
+import com.tsy.leanote.feature.note.contract.NotebookContract;
 import com.tsy.leanote.feature.note.interactor.NoteFileInteractor;
 import com.tsy.leanote.feature.note.interactor.NoteInteractor;
+import com.tsy.leanote.feature.note.interactor.NotebookInteractor;
 import com.tsy.leanote.widget.TabIconView;
 import com.tsy.sdk.myutil.StringUtils;
 import com.tsy.sdk.myutil.ToastUtils;
@@ -60,15 +62,18 @@ public class NoteViewActivity extends BaseActivity implements View.OnClickListen
 
     private NoteContract.Interactor mNoteInteractor;
     private NoteFileContract.Interactor mNoteFileInteractor;
+    private NotebookContract.Interactor mNotebookInteractor;
 
     private NoteViewPreviewFragment mNoteViewPreviewFragment;
     private NoteViewEditorFragment mNoteViewEditorFragment;
 
-    private String mNoteId;
+    private String mNoteId = "";
     private Note mNote;
 
     private String mCurNoteTitle = "";      //当前编辑区title
     private String mCurNoteContent = "";    //当前编辑区content
+    private String mCurNotebookid = "";    //当前编辑区笔记本id
+    private String mCurNotebookpath = "";    //当前编辑区笔记本path
 
     //初始加载多张图片
     private int mTotalPics = 0;
@@ -88,6 +93,7 @@ public class NoteViewActivity extends BaseActivity implements View.OnClickListen
 
         mNoteInteractor = new NoteInteractor(this);
         mNoteFileInteractor = new NoteFileInteractor(this);
+        mNotebookInteractor = new NotebookInteractor(this);
 
         mLoadProgressDialog = new ProgressDialog(this);
         mLoadProgressDialog.setCancelable(false);
@@ -98,27 +104,35 @@ public class NoteViewActivity extends BaseActivity implements View.OnClickListen
 
         //获取笔记数据
         mNoteId = getIntent().getStringExtra(INTENT_NOTE_ID);
-        mNote = mNoteInteractor.getNote(mNoteId);
 
-        //获取note内容
-        if(StringUtils.isEmpty(mNote.getContent())) {
-            mLoadProgressDialog.show();
-            mNoteInteractor.getNoteContent(MyApplication.getInstance().getUserInfo(), mNoteId,
-                    new NoteContract.GetNoteContentCallback() {
-                @Override
-                public void onSuccess(Note note) {
-                    mNote = note;
-                    loadPics();
-                }
+        if(!StringUtils.isEmpty(mNoteId)) {     //编辑
+            mNote = mNoteInteractor.getNote(mNoteId);
 
-                @Override
-                public void onFailure(String msg) {
-                    ToastUtils.showShort(getApplicationContext(), msg);
-                    mLoadProgressDialog.dismiss();
-                }
-            });
-        } else {
-            loadPics();
+            //获取note内容
+            if(StringUtils.isEmpty(mNote.getContent())) {
+                mLoadProgressDialog.show();
+                mNoteInteractor.getNoteContent(MyApplication.getInstance().getUserInfo(), mNoteId,
+                        new NoteContract.GetNoteContentCallback() {
+                            @Override
+                            public void onSuccess(Note note) {
+                                mNote = note;
+                                loadPics();
+                            }
+
+                            @Override
+                            public void onFailure(String msg) {
+                                ToastUtils.showShort(getApplicationContext(), msg);
+                                mLoadProgressDialog.dismiss();
+                            }
+                        });
+            } else {
+                loadPics();
+            }
+        } else {        //新增
+            mViewpager.setCurrentItem(1, true);
+
+            mToolbar.setTitle("新增笔记");
+            setSupportActionBar(mToolbar);
         }
     }
 
@@ -146,6 +160,9 @@ public class NoteViewActivity extends BaseActivity implements View.OnClickListen
             @Override
             public void onPageSelected(int position) {
                 MenuItem saveMenuItem = mToolbar.getMenu().findItem(R.id.action_other_operate);
+                if(saveMenuItem == null) {
+                    return;
+                }
                 if(position == 0) {
                     saveMenuItem.setVisible(false);
                 } else {
@@ -223,6 +240,8 @@ public class NoteViewActivity extends BaseActivity implements View.OnClickListen
     private void loadFinish() {
         mCurNoteTitle = mNote.getTitle();
         mCurNoteContent = mNote.getContent();
+        mCurNotebookid = mNote.getNotebookid();
+        mCurNotebookpath = mNotebookInteractor.getNotebookPath(mNote.getNotebookid());
 
         EventBus.getDefault().post(new NoteEvent(NoteEvent.MSG_INIT));
     }
@@ -258,8 +277,28 @@ public class NoteViewActivity extends BaseActivity implements View.OnClickListen
         mCurNoteContent = curNoteContent;
     }
 
+    public String getCurNotebookid() {
+        return mCurNotebookid;
+    }
+
+    public void setCurNotebookid(String curNotebookid) {
+        mCurNotebookid = curNotebookid;
+    }
+
+    public String getCurNotebookpath() {
+        return mCurNotebookpath;
+    }
+
+    public void setCurNotebookpath(String curNotebookpath) {
+        mCurNotebookpath = curNotebookpath;
+    }
+
     public NoteFileContract.Interactor getNoteFileInteractor() {
         return mNoteFileInteractor;
+    }
+
+    public static Intent createIntent(Context context) {
+        return new Intent(context, NoteViewActivity.class);
     }
 
     public static Intent createIntent(Context context, String noteId) {
@@ -271,6 +310,12 @@ public class NoteViewActivity extends BaseActivity implements View.OnClickListen
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_note_view, menu);
+
+        if(StringUtils.isEmpty(mNoteId)) {     //编辑
+            MenuItem saveMenuItem = mToolbar.getMenu().findItem(R.id.action_other_operate);
+            saveMenuItem.setVisible(true);
+        }
+
         return true;
     }
 

@@ -12,6 +12,7 @@ import com.tsy.leanote.base.BaseFragment;
 import com.tsy.leanote.eventbus.NoteEvent;
 import com.tsy.leanote.feature.note.contract.NoteFileContract;
 import com.tsy.leanote.widget.MarkdownPreviewView;
+import com.tsy.sdk.myutil.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -32,6 +33,9 @@ public class NoteViewPreviewFragment extends BaseFragment {
 
     @BindView(R.id.markdownPreviewView)
     MarkdownPreviewView mMarkdownPreviewView;
+
+    @BindView(R.id.txt_notebookpath)
+    TextView mTxtNotebookpath;
 
     private View mView;
     private Unbinder mUnbinder;
@@ -57,12 +61,9 @@ public class NoteViewPreviewFragment extends BaseFragment {
         mView = inflater.inflate(R.layout.fragment_note_preview, container, false);
         mUnbinder = ButterKnife.bind(this, mView);
         mNoteViewActivity = (NoteViewActivity) getActivity();
-        mMarkdownPreviewView.setOnLoadingFinishListener(new MarkdownPreviewView.OnLoadingFinishListener() {
-            @Override
-            public void onLoadingFinish() {
-                mWebLoaded = true;
-                refreshView();
-            }
+        mMarkdownPreviewView.setOnLoadingFinishListener(() -> {
+            mWebLoaded = true;
+            refreshView();
         });
 
         return mView;
@@ -92,6 +93,11 @@ public class NoteViewPreviewFragment extends BaseFragment {
         mTxtTitle.setText(mNoteViewActivity.getCurNoteTitle());
         String content = parseContent(mNoteViewActivity.getCurNoteContent());
         mMarkdownPreviewView.parseMarkdown(content, true);
+        if(StringUtils.isEmpty(mNoteViewActivity.getCurNotebookpath())) {
+            mTxtNotebookpath.setText(R.string.note_choose_notebook);
+        } else {
+            mTxtNotebookpath.setText(mNoteViewActivity.getCurNotebookpath());
+        }
     }
 
     //把文章内容图片格式转化为本地图片格式

@@ -60,6 +60,7 @@
     <string name="note_save_success">保存成功</string>
     <string name="note_save_fail">保存失败</string>
     <string name="note_save_conflict">笔记有冲突，请先更新再保存</string>
+    <string name="note_choose_notebook">请选择笔记本</string>
 
     <!--widget-->
     <string name="widget_input_column">请输入列数</string>

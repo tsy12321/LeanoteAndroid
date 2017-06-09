@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -32,6 +33,7 @@ import com.tsy.leanote.feature.note.contract.NotebookContract;
 import com.tsy.leanote.feature.note.interactor.NoteInteractor;
 import com.tsy.leanote.feature.note.interactor.NotebookInteractor;
 import com.tsy.leanote.feature.note.view.NoteIndexFragment;
+import com.tsy.leanote.feature.note.view.NoteViewActivity;
 import com.tsy.leanote.feature.user.bean.UserInfo;
 import com.tsy.leanote.feature.user.contract.UserContract;
 import com.tsy.leanote.feature.user.interactor.UserInteractor;
@@ -46,6 +48,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class HomeActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, Toolbar.OnMenuItemClickListener {
 
@@ -57,6 +60,9 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
     @BindView(R.id.nav_view)
     NavigationView nav_view;
+
+    @BindView(R.id.fab_add)
+    FloatingActionButton fab_add;
 
     ImageView img_avatar;
     TextView txt_username;
@@ -125,6 +131,11 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @OnClick(R.id.fab_add)
+    public void addNote() {
+        startActivity(NoteViewActivity.createIntent(this));
     }
 
     /**
