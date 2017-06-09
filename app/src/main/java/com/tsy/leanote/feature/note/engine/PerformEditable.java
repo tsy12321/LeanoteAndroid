@@ -34,6 +34,10 @@ public class PerformEditable implements View.OnClickListener {
     }
 
     public void perform(int id, Object... param) {
+        if (mEditText == null || !mEditText.hasFocus()) {
+            return;
+        }
+
         switch (id) {
             case R.id.id_shortcut_console://代码行
                 performConsole();
@@ -137,7 +141,6 @@ public class PerformEditable implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if (mEditText == null) return;
         perform(v.getId());
     }
 

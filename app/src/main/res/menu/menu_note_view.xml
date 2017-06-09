@@ -7,6 +7,7 @@
         android:title="@string/menu_other_operate"
         android:icon="@drawable/ic_add_white_24dp"
         android:orderInCategory="9"
+        android:visible="false"
         app:showAsAction="always"/>
 
     <item

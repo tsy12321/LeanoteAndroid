@@ -138,6 +138,25 @@ public class NoteViewActivity extends BaseActivity implements View.OnClickListen
         mNoteViewEditorFragment = new NoteViewEditorFragment();
 
         mViewpager.setAdapter(new NoteViewAdapter(getSupportFragmentManager(), mNoteViewPreviewFragment, mNoteViewEditorFragment));
+        mViewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                MenuItem saveMenuItem = mToolbar.getMenu().findItem(R.id.action_other_operate);
+                if(position == 0) {
+                    saveMenuItem.setVisible(false);
+                } else {
+                    saveMenuItem.setVisible(true);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
         mViewpager.setCurrentItem(0, true);
     }
 
@@ -162,6 +181,8 @@ public class NoteViewActivity extends BaseActivity implements View.OnClickListen
         mTabIconView.addTab(R.drawable.ic_shortcut_format_header_4, R.id.id_shortcut_format_header_4, this);
         mTabIconView.addTab(R.drawable.ic_shortcut_format_header_5, R.id.id_shortcut_format_header_5, this);
         mTabIconView.addTab(R.drawable.ic_shortcut_format_header_6, R.id.id_shortcut_format_header_6, this);
+
+        mTabIconView.findViewById(R.id.id_shortcut_insert_photo).setVisibility(View.GONE);
     }
 
     //加载图片 并转换markdown
