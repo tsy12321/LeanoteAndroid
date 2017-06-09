@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:digits="123456789"
                 android:focusable="true"
-                android:hint="请输入行数"
+                android:hint="@string/widget_input_row"
                 android:inputType="number"
                 android:maxLength="2"
                 android:text=""/>
@@ -58,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:digits="123456789"
                 android:focusable="true"
-                android:hint="请输入列数"
+                android:hint="@string/widget_input_column"
                 android:inputType="number"
                 android:maxLength="2"
                 android:text=""/>

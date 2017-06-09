@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusable="true"
-            android:hint="显示文本"
+            android:hint="@string/widget_link_name"
             android:inputType="text"
             android:text=""/>
     </android.support.design.widget.TextInputLayout>
@@ -54,9 +54,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusable="true"
-            android:hint="链接"
+            android:hint="@string/widget_link_href"
             android:inputType="text"
-            android:text="http://"/>
+            android:text=""/>
     </android.support.design.widget.TextInputLayout>
 
     <RelativeLayout
