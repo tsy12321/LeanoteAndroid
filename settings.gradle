@@ -1,1 +1,1 @@
-include ':app', ':myutil'
+include ':app', ':myutil', ':component_user', ':component_note'

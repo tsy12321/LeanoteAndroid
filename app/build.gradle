@@ -3,12 +3,9 @@ apply plugin: 'com.jakewharton.butterknife'
 apply plugin: 'org.greenrobot.greendao'
 apply plugin: 'com.antfortune.freeline'
 
-// lambda
-apply plugin: 'me.tatarka.retrolambda'
-
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.tsy.leanote"
         minSdkVersion 15
