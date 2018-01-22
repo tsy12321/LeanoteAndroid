@@ -1,5 +1,6 @@
 package com.tsy.leanote.feature.note.contract;
 
+import com.tsy.leanote.feature.note.bean.NoteFile;
 import com.tsy.leanote.feature.user.bean.UserInfo;
 
 import org.json.JSONArray;
@@ -30,6 +31,14 @@ public interface NoteFileContract {
          * @return
          */
         String getPicWebviewPath(String fileId);
+
+        /**
+         * 插入新notefile
+         * @param noteId noteid
+         * @param path 文件路径
+         * @return
+         */
+        NoteFile createNoteFile(String noteId, String path);
     }
 
     interface LoadAllPicsCallback {

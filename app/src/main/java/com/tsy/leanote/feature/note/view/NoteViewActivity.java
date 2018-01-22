@@ -1,10 +1,15 @@
 package com.tsy.leanote.feature.note.view;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -25,6 +30,7 @@ import com.tsy.leanote.base.BaseActivity;
 import com.tsy.leanote.eventbus.NoteEvent;
 import com.tsy.leanote.eventbus.SyncEvent;
 import com.tsy.leanote.feature.note.bean.Note;
+import com.tsy.leanote.feature.note.bean.NoteFile;
 import com.tsy.leanote.feature.note.contract.NoteContract;
 import com.tsy.leanote.feature.note.contract.NoteFileContract;
 import com.tsy.leanote.feature.note.contract.NotebookContract;
@@ -39,7 +45,10 @@ import net.cachapa.expandablelayout.ExpandableLayout;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.File;
+import java.security.Permission;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -83,7 +92,8 @@ public class NoteViewActivity extends BaseActivity implements View.OnClickListen
 
     private boolean mHasEdit = false;   //是否编辑
 
-    private final int SYSTEM_GALLERY = 1;
+    private final int RC_SYSTEM_GALLERY = 1;
+    private final int RC_PERMISSION = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +144,24 @@ public class NoteViewActivity extends BaseActivity implements View.OnClickListen
             mToolbar.setTitle("新增笔记");
             setSupportActionBar(mToolbar);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        String[] perms = {Manifest.permission.READ_EXTERNAL_STORAGE};
+        performCodeWithPermission(R.string.permission_rc_storage, RC_PERMISSION, perms, new PermissionCallback() {
+            @Override
+            public void hasPermission(List<String> allPerms) {
+
+            }
+
+            @Override
+            public void noPermission(List<String> deniedPerms, List<String> grantedPerms, Boolean hasPermanentlyDenied) {
+
+            }
+        });
     }
 
     //初始化toolbar
@@ -198,8 +226,6 @@ public class NoteViewActivity extends BaseActivity implements View.OnClickListen
         mTabIconView.addTab(R.drawable.ic_shortcut_format_header_4, R.id.id_shortcut_format_header_4, this);
         mTabIconView.addTab(R.drawable.ic_shortcut_format_header_5, R.id.id_shortcut_format_header_5, this);
         mTabIconView.addTab(R.drawable.ic_shortcut_format_header_6, R.id.id_shortcut_format_header_6, this);
-
-        mTabIconView.findViewById(R.id.id_shortcut_insert_photo).setVisibility(View.GONE);
     }
 
     //加载图片 并转换markdown
@@ -427,7 +453,7 @@ public class NoteViewActivity extends BaseActivity implements View.OnClickListen
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_PICK);// Pick an item fromthe
             intent.setType("image/*");// 从所有图片中进行选择
-            startActivityForResult(intent, SYSTEM_GALLERY);
+            startActivityForResult(intent, RC_SYSTEM_GALLERY);
             return;
         } else if (R.id.id_shortcut_insert_link == v.getId()) {
             //插入链接
@@ -558,5 +584,28 @@ public class NoteViewActivity extends BaseActivity implements View.OnClickListen
         });
 
         dialog.show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (resultCode == Activity.RESULT_OK && requestCode == RC_SYSTEM_GALLERY) {
+            Uri uri = data.getData();
+            String[] pojo = {MediaStore.Images.Media.DATA};
+            Cursor cursor = this.managedQuery(uri, pojo, null, null, null);
+            if (cursor != null) {
+                int colunm_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                cursor.moveToFirst();
+                String path = cursor.getString(colunm_index);
+
+                NoteFile noteFile = mNoteFileInteractor.createNoteFile(mNoteId, path);
+                String fileUrl = "http://leanote.com/file/outputImage?fileId=" + noteFile.getLocalFileId();
+
+                mNoteViewEditorFragment.getPerformEditable().perform(R.id.id_shortcut_insert_photo, fileUrl);
+            } else {
+                ToastUtils.showShort(this, "图片处理失败");
+            }
+        }
+
     }
 }

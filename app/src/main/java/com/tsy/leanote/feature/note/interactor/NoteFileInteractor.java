@@ -11,12 +11,17 @@ import com.tsy.leanote.feature.user.bean.UserInfo;
 import com.tsy.leanote.greendao.NoteFileDao;
 import com.tsy.sdk.myokhttp.MyOkHttp;
 import com.tsy.sdk.myokhttp.response.DownloadResponseHandler;
+import com.tsy.sdk.myutil.FileUtils;
+import com.tsy.sdk.myutil.StringUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by tsy on 2017/2/15.
@@ -28,6 +33,8 @@ public class NoteFileInteractor implements NoteFileContract.Interactor {
     private Context mContext;
     private MyOkHttp mMyOkHttp;
     private NoteFileDao mNoteFileDao;
+
+    private ArrayList<NoteFile> mAddNotes;
 
     private final String API_GET_IMAGE = "/api/file/getImage";       //获取图片
 
@@ -83,7 +90,7 @@ public class NoteFileInteractor implements NoteFileContract.Interactor {
         int total = 0;
         int loaded = 0;
         for(final NoteFile noteFile : noteFiles) {
-            if (!noteFile.getIsAttach()) {
+            if (!noteFile.getIsAttach() && !StringUtils.isEmpty(noteFile.getFileId())) {
                 total ++;
                 if(new File(getPicPath(noteFile.getFileId())).exists()
                         && new File(getPicPath(noteFile.getFileId())).length() > 0L) {
@@ -140,12 +147,49 @@ public class NoteFileInteractor implements NoteFileContract.Interactor {
     }
 
     private String getPicPath(String fileId) {
-        return DOWNLOAD_PIC_DIR + fileId + ".png";
+        return mContext.getFilesDir() + "/" + fileId + ".png";
     }
 
     private ArrayList<NoteFile> getFilesByNoteid(String noteid) {
         return (ArrayList<NoteFile>) mNoteFileDao.queryBuilder()
                 .where(NoteFileDao.Properties.Noteid.eq(noteid))
                 .list();
+    }
+
+    /**
+     * 创建本地 file id
+     * @return
+     */
+    private String createLocalFileId() {
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+        String str = format.format(new Date());
+        return "local" + str;
+    }
+
+    /**
+     * 插入新notefile
+     * @param noteId noteid
+     * @param path 文件路径
+     * @return
+     */
+    @Override
+    public NoteFile createNoteFile(String noteId, String path) {
+        //添加新数据
+        NoteFile noteFile = new NoteFile();
+        noteFile.setNoteid(noteId);
+        noteFile.setLocalFileId(createLocalFileId());
+        noteFile.setHasBody(true);
+        noteFile.setIsAttach(false);
+
+        //复制文件到指定目录
+        FileUtils.copyFile(path, getPicPath(noteFile.getLocalFileId()));
+
+        if(mAddNotes == null) {
+            mAddNotes = new ArrayList<>();
+        }
+
+        mAddNotes.add(noteFile);
+
+        return noteFile;
     }
 }
