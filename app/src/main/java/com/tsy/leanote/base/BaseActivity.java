@@ -42,6 +42,18 @@ public class BaseActivity extends AppCompatActivity implements EasyPermissions.P
 
     /**
      * request permission
+     * @param resId if denied first, next request rationale
+     * @param requestCode requestCode
+     * @param perms permissions
+     * @param callback callback
+     */
+    protected void performCodeWithPermission(@NonNull int resId,
+                                             final int requestCode, @NonNull String[] perms, @NonNull PermissionCallback callback) {
+        performCodeWithPermission(getResources().getString(resId), requestCode, perms, callback);
+    }
+
+    /**
+     * request permission
      * @param rationale if denied first, next request rationale
      * @param requestCode requestCode
      * @param perms permissions
