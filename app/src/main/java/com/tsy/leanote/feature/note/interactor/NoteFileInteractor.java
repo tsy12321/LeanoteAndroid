@@ -170,10 +170,10 @@ public class NoteFileInteractor implements NoteFileContract.Interactor {
      * 插入新notefile
      * @param noteId noteid
      * @param path 文件路径
-     * @return
+     * @return 拼接的图片地址
      */
     @Override
-    public NoteFile createNoteFile(String noteId, String path) {
+    public String createNoteFile(String noteId, String path) {
         //添加新数据
         NoteFile noteFile = new NoteFile();
         noteFile.setNoteid(noteId);
@@ -190,6 +190,6 @@ public class NoteFileInteractor implements NoteFileContract.Interactor {
 
         mAddNotes.add(noteFile);
 
-        return noteFile;
+        return EnvConstant.HOST + API_GET_IMAGE + "?fileId=" + noteFile.getLocalFileId();
     }
 }

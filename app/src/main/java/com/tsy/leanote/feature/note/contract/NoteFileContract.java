@@ -38,7 +38,7 @@ public interface NoteFileContract {
          * @param path 文件路径
          * @return
          */
-        NoteFile createNoteFile(String noteId, String path);
+        String createNoteFile(String noteId, String path);
     }
 
     interface LoadAllPicsCallback {

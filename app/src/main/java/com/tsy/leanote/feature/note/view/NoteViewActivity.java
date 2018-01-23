@@ -27,6 +27,7 @@ import android.widget.EditText;
 import com.tsy.leanote.MyApplication;
 import com.tsy.leanote.R;
 import com.tsy.leanote.base.BaseActivity;
+import com.tsy.leanote.constant.EnvConstant;
 import com.tsy.leanote.eventbus.NoteEvent;
 import com.tsy.leanote.eventbus.SyncEvent;
 import com.tsy.leanote.feature.note.bean.Note;
@@ -594,12 +595,11 @@ public class NoteViewActivity extends BaseActivity implements View.OnClickListen
             String[] pojo = {MediaStore.Images.Media.DATA};
             Cursor cursor = this.managedQuery(uri, pojo, null, null, null);
             if (cursor != null) {
-                int colunm_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                int colunmIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
                 cursor.moveToFirst();
-                String path = cursor.getString(colunm_index);
+                String path = cursor.getString(colunmIndex);
 
-                NoteFile noteFile = mNoteFileInteractor.createNoteFile(mNoteId, path);
-                String fileUrl = "http://leanote.com/file/outputImage?fileId=" + noteFile.getLocalFileId();
+                String fileUrl = mNoteFileInteractor.createNoteFile(mNoteId, path);
 
                 mNoteViewEditorFragment.getPerformEditable().perform(R.id.id_shortcut_insert_photo, fileUrl);
             } else {
