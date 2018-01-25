@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -26,6 +25,7 @@ import com.bumptech.glide.Glide;
 import com.orhanobut.logger.Logger;
 import com.tsy.leanote.base.BaseActivity;
 import com.tsy.leanote.base.NormalInteractorCallback;
+import com.tsy.leanote.constant.EnvConstant;
 import com.tsy.leanote.eventbus.SyncEvent;
 import com.tsy.leanote.feature.note.bean.Note;
 import com.tsy.leanote.feature.note.bean.Notebook;
@@ -39,7 +39,7 @@ import com.tsy.leanote.feature.user.bean.UserInfo;
 import com.tsy.leanote.feature.user.contract.UserContract;
 import com.tsy.leanote.feature.user.interactor.UserInteractor;
 import com.tsy.leanote.feature.user.view.LoginActivity;
-import com.tsy.leanote.feature.webview.WebviewFragment;
+import com.tsy.leanote.widget.webview.WebviewFragment;
 import com.tsy.leanote.glide.CropCircleTransformation;
 import com.tsy.sdk.myutil.ToastUtils;
 
@@ -78,7 +78,8 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     private NoteContract.Interactor mNoteInteractor;
 
     private NoteIndexFragment mNoteIndexFragment;
-    private WebviewFragment mWebviewFragment;
+    private WebviewFragment mBlogWebviewFragment;
+    private WebviewFragment mLeeWebviewFragment;
 
     private ProgressDialog mSyncProgressDialog;
 
@@ -163,8 +164,11 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
             transaction.add(R.id.fl_content, mNoteIndexFragment, "NoteIndexFragment");
         }
 
-        if(mWebviewFragment != null) {
-            transaction.hide(mWebviewFragment);
+        if(mBlogWebviewFragment != null) {
+            transaction.hide(mBlogWebviewFragment);
+        }
+        if(mLeeWebviewFragment != null) {
+            transaction.hide(mLeeWebviewFragment);
         }
 
         transaction.show(mNoteIndexFragment);
@@ -180,16 +184,21 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        if(mWebviewFragment == null) {
-            mWebviewFragment = new WebviewFragment();
-            transaction.add(R.id.fl_content, mWebviewFragment, "WebviewFragment");
+        if(mBlogWebviewFragment == null) {
+            mBlogWebviewFragment = new WebviewFragment();
+            mBlogWebviewFragment.setArguments(WebviewFragment.createArguments(EnvConstant.HOST + "/blog/" + mUserInfo.getEmail()));
+
+            transaction.add(R.id.fl_content, mBlogWebviewFragment, "BlogWebviewFragment");
         }
 
         if(mNoteIndexFragment != null) {
             transaction.hide(mNoteIndexFragment);
         }
+        if(mLeeWebviewFragment != null) {
+            transaction.hide(mLeeWebviewFragment);
+        }
 
-        transaction.show(mWebviewFragment);
+        transaction.show(mBlogWebviewFragment);
         transaction.commit();
     }
 
@@ -202,16 +211,21 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        if(mWebviewFragment == null) {
-            mWebviewFragment = new WebviewFragment();
-            transaction.add(R.id.fl_content, mWebviewFragment, "WebviewFragment");
+        if(mLeeWebviewFragment == null) {
+            mLeeWebviewFragment = new WebviewFragment();
+            mLeeWebviewFragment.setArguments(WebviewFragment.createArguments("http://lea.leanote.com/index"));
+
+            transaction.add(R.id.fl_content, mLeeWebviewFragment, "LeeWebviewFragment");
         }
 
         if(mNoteIndexFragment != null) {
             transaction.hide(mNoteIndexFragment);
         }
+        if(mBlogWebviewFragment != null) {
+            transaction.hide(mBlogWebviewFragment);
+        }
 
-        transaction.show(mWebviewFragment);
+        transaction.show(mLeeWebviewFragment);
         transaction.commit();
     }
 

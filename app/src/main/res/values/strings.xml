@@ -74,4 +74,9 @@
     <string name="widget_input_row">请输入行数</string>
     <string name="widget_link_name">显示文本</string>
     <string name="widget_link_href">链接</string>
+
+    <!--widget-->
+    <string name="loadsir_error">出错了</string>
+    <string name="loadsir_fine_no_data">无数据</string>
+    <string name="loadsir_click_me_to_retry">点击重试！</string>
 </resources>

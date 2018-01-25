@@ -1,6 +1,8 @@
 package com.tsy.leanote.base;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
 import com.tsy.leanote.MyApplication;
@@ -157,5 +159,25 @@ public class BaseActivity extends AppCompatActivity implements EasyPermissions.P
         super.onDestroy();
 
         MyApplication.getInstance().getMyOkHttp().cancel(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        @SuppressLint("RestrictedApi") List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
+
+        boolean handled = false;
+        for(Fragment f : fragmentList) {
+            if(f instanceof BaseFragment) {
+                handled = ((BaseFragment)f).onBackPressed();
+
+                if(handled) {
+                    break;
+                }
+            }
+        }
+
+        if(!handled) {
+            super.onBackPressed();
+        }
     }
 }

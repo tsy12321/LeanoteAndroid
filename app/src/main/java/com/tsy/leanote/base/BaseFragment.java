@@ -158,4 +158,8 @@ public class BaseFragment extends Fragment implements EasyPermissions.Permission
 
         MyApplication.getInstance().getMyOkHttp().cancel(this);
     }
+
+    public boolean onBackPressed() {
+        return false;
+    }
 }

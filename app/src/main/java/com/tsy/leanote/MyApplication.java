@@ -3,11 +3,15 @@ package com.tsy.leanote;
 import android.app.Application;
 import android.content.Context;
 
+import com.kingja.loadsir.core.LoadSir;
 import com.squareup.leakcanary.LeakCanary;
 import com.tsy.leanote.feature.user.bean.UserInfo;
 import com.tsy.leanote.greendao.DBHelper;
 import com.tsy.leanote.greendao.DaoMaster;
 import com.tsy.leanote.greendao.DaoSession;
+import com.tsy.leanote.widget.loadsir.EmptyCallback;
+import com.tsy.leanote.widget.loadsir.ErrorCallback;
+import com.tsy.leanote.widget.loadsir.LoadingCallback;
 import com.tsy.sdk.myokhttp.MyOkHttp;
 
 import okhttp3.OkHttpClient;
@@ -42,6 +46,12 @@ public class MyApplication extends Application {
         DBHelper devOpenHelper = new DBHelper(getApplicationContext(), "leanote.db");
         DaoMaster daoMaster = new DaoMaster(devOpenHelper.getWritableDb());
         mDaoSession = daoMaster.newSession();
+
+        LoadSir.beginBuilder()
+                .addCallback(new ErrorCallback())
+                .addCallback(new EmptyCallback())
+                .addCallback(new LoadingCallback())
+                .commit();
     }
 
     private void initMyOkHttp() {
