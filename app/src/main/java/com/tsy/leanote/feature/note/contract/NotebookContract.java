@@ -42,9 +42,29 @@ public interface NotebookContract {
          * @return
          */
         String getNotebookPath(String notebookid);
+
+        /**
+         * 根据title获取notebook
+         * @param title
+         * @return
+         */
+        Notebook getNotebookByTitle(String title);
+
+        /**
+         * 添加notebook
+         * @param userInfo 用户信息
+         * @param title 标题
+         * @param parent 父notebook
+         * @param callback
+         */
+        void addNotebook(UserInfo userInfo, String title, String parent, NotebookCallback callback);
     }
 
     interface GetNotebooksCallback extends BaseInteractorCallback {
         void onSuccess(List<Notebook> notebooks);
+    }
+
+    interface NotebookCallback extends BaseInteractorCallback {
+        void onSuccess(Notebook notebook);
     }
 }

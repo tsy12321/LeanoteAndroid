@@ -78,11 +78,10 @@ public class NoteFileInteractor implements NoteFileContract.Interactor {
 
     /**
      * 更新localFile
-     * @param noteId
      * @param noteFiles
      */
     @Override
-    public void updateLocalFile(String noteId, JSONArray noteFiles) {
+    public void updateLocalFile(JSONArray noteFiles) {
         if(noteFiles != null && noteFiles.length() > 0) {
             for(int i = 0; i < noteFiles.length(); i ++) {
                 JSONObject noteFileJson = noteFiles.optJSONObject(i);
@@ -227,6 +226,17 @@ public class NoteFileInteractor implements NoteFileContract.Interactor {
     @Override
     public ArrayList<NoteFile> getAddNoteFiles() {
         return mAddNoteFiles;
+    }
+
+    /**
+     * 清空新插入的noteFile
+     */
+    @Override
+    public void clearAddNoteFiles() {
+        if(mAddNoteFiles != null) {
+            mAddNoteFiles.clear();
+            mAddNoteFiles = null;
+        }
     }
 
 

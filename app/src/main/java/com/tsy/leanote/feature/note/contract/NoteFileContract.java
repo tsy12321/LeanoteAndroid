@@ -23,10 +23,9 @@ public interface NoteFileContract {
 
         /**
          * 更新localFile
-         * @param noteId
          * @param noteFiles
          */
-        void updateLocalFile(String noteId, JSONArray noteFiles);
+        void updateLocalFile(JSONArray noteFiles);
 
         /**
          * 加载某个笔记下的所有pics（下载下来）
@@ -61,6 +60,11 @@ public interface NoteFileContract {
          * @return
          */
         ArrayList<NoteFile> getAddNoteFiles();
+
+        /**
+         * 清空新插入的noteFile
+         */
+        void clearAddNoteFiles();
     }
 
     interface LoadAllPicsCallback {

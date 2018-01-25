@@ -7,12 +7,15 @@ import com.tsy.leanote.R;
 import com.tsy.leanote.constant.EnvConstant;
 import com.tsy.leanote.feature.note.bean.Note;
 import com.tsy.leanote.feature.note.bean.NoteFile;
+import com.tsy.leanote.feature.note.bean.Notebook;
 import com.tsy.leanote.feature.note.contract.NoteContract;
+import com.tsy.leanote.feature.note.contract.NotebookContract;
 import com.tsy.leanote.feature.user.bean.UserInfo;
 import com.tsy.leanote.greendao.NoteDao;
 import com.tsy.sdk.myokhttp.MyOkHttp;
 import com.tsy.sdk.myokhttp.response.JsonResponseHandler;
 import com.tsy.sdk.myutil.NetworkUtils;
+import com.tsy.sdk.myutil.StringUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,8 +23,10 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by tsy on 2016/12/23.
@@ -34,6 +39,7 @@ public class NoteInteractor implements NoteContract.Interactor {
     private final String API_GET_NOTE_CONTENT = "/api/note/getNoteContent";       //获得某笔记内容
     private final String API_GET_NOTE_AND_CONTENT = "/api/note/getNoteAndContent";       //获得笔记与内容
     private final String API_UPDATE_NOTE = "/api/note/updateNote";       //更新笔记
+    private final String API_ADD_NOTE = "/api/note/addNote";       //插入笔记
 
     private Object mTag;
     private Context mContext;
@@ -349,6 +355,22 @@ public class NoteInteractor implements NoteContract.Interactor {
             callback.onFailure(mContext.getString(R.string.app_no_network));
             return;
         }
+        Iterator iterator = updateArgvs.entrySet().iterator();
+        while(iterator.hasNext()) {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            if(entry.getValue().toString().isEmpty()) {
+                if(entry.getKey().equals("NotebookId")) {
+                    callback.onFailure(mContext.getString(R.string.note_empty_notebook));
+                    return;
+                } else if(entry.getKey().equals("Title")) {
+                    callback.onFailure(mContext.getString(R.string.note_empty_title));
+                    return;
+                } else if(entry.getKey().equals("Content")) {
+                    callback.onFailure(mContext.getString(R.string.note_empty_content));
+                    return;
+                }
+            }
+        }
 
         final Note note = getNote(noteId);
 
@@ -378,9 +400,25 @@ public class NoteInteractor implements NoteContract.Interactor {
 
                         //更新本地localFile
                         NoteFileInteractor noteFileInteractor = new NoteFileInteractor();
-                        noteFileInteractor.updateLocalFile(noteId, response.optJSONArray("Files"));
+                        noteFileInteractor.updateLocalFile(response.optJSONArray("Files"));
 
-                        getNoteAndContent(userInfo, noteId, new NoteContract.GetNoteContentCallback() {
+                        //更新Note信息
+                        Note note = getNote(noteId);
+                        note.setNotebookid(response.optString("NotebookId"));
+                        note.setUid(response.optString("UserId"));
+                        note.setTitle(response.optString("Title"));
+                        note.setIs_markdown(response.optBoolean("IsMarkdown"));
+                        note.setIs_blog(response.optBoolean("IsBlog"));
+                        note.setIs_trash(response.optBoolean("IsTrash"));
+                        note.setCreated_time(response.optString("CreatedTime"));
+                        note.setUpdated_time(response.optString("UpdatedTime"));
+                        note.setPublic_time(response.optString("PublicTime"));
+                        note.setUsn(response.optInt("Usn"));
+                        noteFileInteractor.addNoteFiles(noteId, response.optJSONArray("Files"));
+                        mNoteDao.update(note);
+
+                        //获取内容信息
+                        getNoteContent(userInfo, noteId, new NoteContract.GetNoteContentCallback() {
                             @Override
                             public void onSuccess(Note note) {
                                 callback.onSuccess(note);
@@ -400,6 +438,143 @@ public class NoteInteractor implements NoteContract.Interactor {
                 });
     }
 
+    /**
+     * 添加Note
+     * @param userInfo 用户
+     * @param noteBookId noteBookId
+     * @param title 标题
+     * @param content 内容
+     * @param noteFiles 所有文件元数据
+     * @param callback
+     */
+    @Override
+    public void addNote(final UserInfo userInfo,
+                        String noteBookId,
+                        final String title,
+                        final String content,
+                        final ArrayList<NoteFile> noteFiles,
+                        final NoteContract.UpdateNoteCallback callback) {
+        if(!NetworkUtils.checkNetworkConnect(mContext)) {
+            callback.onFailure(mContext.getString(R.string.app_no_network));
+            return;
+        }
+        if(StringUtils.isEmpty(title)) {
+            callback.onFailure(mContext.getString(R.string.note_empty_title));
+            return;
+        }
+        if(StringUtils.isEmpty(content)) {
+            callback.onFailure(mContext.getString(R.string.note_empty_content));
+            return;
+        }
+        if(StringUtils.isEmpty(noteBookId)) {
+            //默认放在mobile下面
+            NotebookInteractor notebookInteractor = new NotebookInteractor();
+            Notebook notebook = notebookInteractor.getNotebookByTitle("mobile");
+            if(notebook != null) {
+                noteBookId = notebook.getNotebookid();
+                doAddNote(userInfo, noteBookId, title, content, noteFiles, callback);
+            } else {
+                //创建一个notebook
+                notebookInteractor.addNotebook(userInfo, "mobile", "", new NotebookContract.NotebookCallback() {
+                    @Override
+                    public void onSuccess(Notebook notebook) {
+                        doAddNote(userInfo, notebook.getNotebookid(), title, content, noteFiles, callback);
+                    }
+
+                    @Override
+                    public void onFailure(String msg) {
+                        callback.onFailure(mContext.getString(R.string.app_no_network));
+                    }
+                });
+            }
+//            callback.onFailure(mContext.getString(R.string.note_empty_notebook));
+//            return;
+        } else {
+            doAddNote(userInfo, noteBookId, title, content, noteFiles, callback);
+        }
+    }
+
+    /**
+     * addNote请求
+     * @param userInfo
+     * @param noteBookId
+     * @param title
+     * @param content
+     * @param noteFiles
+     * @param callback
+     */
+    private void doAddNote(UserInfo userInfo,
+                           String noteBookId,
+                           String title,
+                           final String content,
+                           ArrayList<NoteFile> noteFiles,
+                           NoteContract.UpdateNoteCallback callback) {
+        String url = EnvConstant.HOST + API_ADD_NOTE;
+
+        Map<String, String> param = new HashMap<>();
+        param.put("token", userInfo.getToken());
+        param.put("NotebookId", noteBookId);
+        param.put("Title", title);
+        param.put("Content", content);
+        param.put("IsMarkdown", "true");
+
+        Map<String, String> noteFilesBody = parseNoteFileRequestBody(noteFiles);
+        param.putAll(noteFilesBody);
+
+        Map<String, File> noteFilesMultipart = parseNoteFileMultipart(noteFiles);
+
+        mMyOkHttp.upload()
+                .url(url)
+                .params(param)
+                .files(noteFilesMultipart)
+                .tag(mTag)
+                .enqueue(new JsonResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, JSONObject response) {
+                        if(response.has("Ok") && !response.optBoolean("Ok", false)) {
+                            callback.onFailure(response.optString("Msg"));
+                            return;
+                        }
+
+                        //更新本地localFile
+                        NoteFileInteractor noteFileInteractor = new NoteFileInteractor();
+                        noteFileInteractor.updateLocalFile(response.optJSONArray("Files"));
+
+                        //插入一条数据
+                        Note note = new Note();
+                        note.setNoteid(response.optString("NoteId"));
+                        note.setNotebookid(response.optString("NotebookId"));
+                        note.setUid(response.optString("UserId"));
+                        note.setTitle(response.optString("Title"));
+                        note.setContent(content);
+                        note.setIs_markdown(response.optBoolean("IsMarkdown"));
+                        note.setIs_blog(response.optBoolean("IsBlog"));
+                        note.setIs_trash(response.optBoolean("IsTrash"));
+                        note.setCreated_time(response.optString("CreatedTime"));
+                        note.setUpdated_time(response.optString("UpdatedTime"));
+                        note.setPublic_time(response.optString("PublicTime"));
+                        note.setUsn(response.optInt("Usn"));
+                        mNoteDao.insert(note);
+
+                        getNoteContent(userInfo, response.optString("NoteId"), new NoteContract.GetNoteContentCallback() {
+                            @Override
+                            public void onSuccess(Note note) {
+                                callback.onSuccess(note);
+                            }
+
+                            @Override
+                            public void onFailure(String msg) {
+                                callback.onFailure(msg);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, String error_msg) {
+                        callback.onFailure(error_msg);
+                    }
+                });
+    }
     /**
      * 将文件数据转为请求元数据
      * @param noteFiles

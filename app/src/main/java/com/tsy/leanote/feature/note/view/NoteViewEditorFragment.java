@@ -103,7 +103,8 @@ public class NoteViewEditorFragment extends BaseFragment {
         mTxtTitle.setSelection(mTxtTitle.getText().length());
         mTxtContent.setText(mNoteViewActivity.getCurNoteContent());
         if(StringUtils.isEmpty(mNoteViewActivity.getCurNotebookpath())) {
-            mTxtNotebookpath.setText(R.string.note_choose_notebook);
+//            mTxtNotebookpath.setText(R.string.note_choose_notebook);
+            mTxtNotebookpath.setText("/mobile");
         } else {
             mTxtNotebookpath.setText(mNoteViewActivity.getCurNotebookpath());
         }

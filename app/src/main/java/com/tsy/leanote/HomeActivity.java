@@ -119,6 +119,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
         Glide.with(this)
                 .load(mUserInfo.getLogo())
+                .placeholder(R.drawable.default_avatar)
                 .bitmapTransform(new CropCircleTransformation(this))
                 .into(img_avatar);
         txt_username.setText(mUserInfo.getUsername());

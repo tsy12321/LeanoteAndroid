@@ -141,7 +141,6 @@ public class NoteViewActivity extends BaseActivity implements View.OnClickListen
             }
         } else {        //新增
             mViewpager.setCurrentItem(1, true);
-
             mToolbar.setTitle("新增笔记");
             setSupportActionBar(mToolbar);
         }
@@ -342,9 +341,10 @@ public class NoteViewActivity extends BaseActivity implements View.OnClickListen
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_note_view, menu);
 
-        if(StringUtils.isEmpty(mNoteId)) {     //编辑
+        if(StringUtils.isEmpty(mNoteId)) {     //新增
             MenuItem saveMenuItem = mToolbar.getMenu().findItem(R.id.action_other_operate);
             saveMenuItem.setVisible(true);
+            setEdit(true);
         }
 
         return true;
@@ -418,43 +418,92 @@ public class NoteViewActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void save(final Boolean exit) {
-        if(!mHasEdit) {
-            return;
+        if(StringUtils.isEmpty(mNoteId)) {     //新增
+            mLoadProgressDialog.show();
+
+            mNoteInteractor.addNote(MyApplication.getInstance().getUserInfo(),
+                    mCurNotebookid, mCurNoteTitle, mCurNoteContent, mNoteFileInteractor.getAddNoteFiles(),
+                    new NoteContract.UpdateNoteCallback() {
+                        @Override
+                        public void onSuccess(Note note) {
+                            mLoadProgressDialog.dismiss();
+                            ToastUtils.showShort(getApplicationContext(), R.string.note_save_success);
+
+                            //设置以保存
+                            setEdit(false);
+
+                            //刷新新的页面数据
+                            mNote = note;
+                            mNoteId = mNote.getNoteid();
+                            loadFinish();
+
+                            //切到浏览页
+                            mViewpager.setCurrentItem(0, true);
+
+                            //清空添加的文件图片
+                            mNoteFileInteractor.clearAddNoteFiles();
+
+                            EventBus.getDefault().post(new SyncEvent(SyncEvent.MSG_SYNC));
+
+                            if(exit) {
+                                finish();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(String msg) {
+                            mLoadProgressDialog.dismiss();
+                            ToastUtils.showShort(getApplicationContext(), msg);
+                        }
+                    });
+        } else {        //编辑
+            if(!mHasEdit) {
+                return;
+            }
+            Map<String, String> updateArgvs = new HashMap<>();
+            updateArgvs.put("Title", mCurNoteTitle);
+            updateArgvs.put("Content", mCurNoteContent);
+
+            mLoadProgressDialog.show();
+            mNoteInteractor.updateNote(MyApplication.getInstance().getUserInfo(),
+                    mNoteId, updateArgvs, mNoteFileInteractor.getAddNoteFiles(),
+                    new NoteContract.UpdateNoteCallback() {
+                        @Override
+                        public void onSuccess(Note note) {
+                            mLoadProgressDialog.dismiss();
+                            ToastUtils.showShort(getApplicationContext(), R.string.note_save_success);
+
+                            //设置以保存
+                            setEdit(false);
+
+                            //刷新新的页面数据
+                            mNote = note;
+                            loadFinish();
+
+                            //切到浏览页
+                            mViewpager.setCurrentItem(0, true);
+
+                            //清空添加的文件图片
+                            mNoteFileInteractor.clearAddNoteFiles();
+
+                            EventBus.getDefault().post(new SyncEvent(SyncEvent.MSG_SYNC));
+
+                            if(exit) {
+                                finish();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(String msg) {
+                            mLoadProgressDialog.dismiss();
+                            if(msg.equals("conflict")) {
+                                ToastUtils.showShort(getApplicationContext(), R.string.note_save_conflict);
+                            } else {
+                                ToastUtils.showShort(getApplicationContext(), msg);
+                            }
+                        }
+                    });
         }
-        Map<String, String> updateArgvs = new HashMap<>();
-        updateArgvs.put("Title", mCurNoteTitle);
-        updateArgvs.put("Content", mCurNoteContent);
-
-        mLoadProgressDialog.show();
-        mNoteInteractor.updateNote(MyApplication.getInstance().getUserInfo(),
-                mNoteId, updateArgvs, mNoteFileInteractor.getAddNoteFiles(),
-                new NoteContract.UpdateNoteCallback() {
-            @Override
-            public void onSuccess(Note note) {
-                mLoadProgressDialog.dismiss();
-                ToastUtils.showShort(getApplicationContext(), R.string.note_save_success);
-                setEdit(false);
-                mNote = note;
-                loadFinish();
-                mViewpager.setCurrentItem(0, true);
-
-                EventBus.getDefault().post(new SyncEvent(SyncEvent.MSG_SYNC));
-
-                if(exit) {
-                    finish();
-                }
-            }
-
-            @Override
-            public void onFailure(String msg) {
-                mLoadProgressDialog.dismiss();
-                if(msg.equals("conflict")) {
-                    ToastUtils.showShort(getApplicationContext(), R.string.note_save_conflict);
-                } else {
-                    ToastUtils.showShort(getApplicationContext(), msg);
-                }
-            }
-        });
     }
 
     @Override

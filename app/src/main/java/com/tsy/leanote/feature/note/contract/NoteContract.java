@@ -80,6 +80,21 @@ public interface NoteContract {
                         Map<String, String> updateArgvs,
                         ArrayList<NoteFile> noteFiles,
                         UpdateNoteCallback callback);
+
+        /**
+         * 添加Note
+         * @param userInfo 用户
+         * @param noteBookId noteBookId
+         * @param title 标题
+         * @param content 内容
+         * @param noteFiles 所有文件元数据
+         * @param callback
+         */
+        void addNote(UserInfo userInfo, String noteBookId,
+                        String title,
+                        String content,
+                        ArrayList<NoteFile> noteFiles,
+                        UpdateNoteCallback callback);
     }
 
     interface GetNotesCallback extends BaseInteractorCallback {
