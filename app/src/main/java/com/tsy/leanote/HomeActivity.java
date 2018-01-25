@@ -236,16 +236,19 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
             case R.id.nav_note:
                 drawer_layout.closeDrawer(GravityCompat.START);
                 switchNote();
+                showSyncAndNote(true);
                 break;
 
             case R.id.nav_blog:
                 drawer_layout.closeDrawer(GravityCompat.START);
                 switchBlog();
+                showSyncAndNote(false);
                 break;
 
             case R.id.nav_lee:
                 drawer_layout.closeDrawer(GravityCompat.START);
                 switchLee();
+                showSyncAndNote(false);
                 break;
 
             case R.id.nav_exit:
@@ -259,6 +262,9 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                     }
                 });
                 builder.show();
+                break;
+
+            default:
                 break;
         }
 
@@ -290,6 +296,21 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
             case SyncEvent.MSG_SYNC:
                 doSync();
                 break;
+        }
+    }
+
+    /**
+     * 显示或隐藏同步按钮和添加按钮
+     * @param show
+     */
+    private void showSyncAndNote(boolean show) {
+        MenuItem syncItem = toolbar.getMenu().findItem(R.id.action_sync);
+        if(show) {
+            syncItem.setVisible(true);
+            fab_add.setVisibility(View.VISIBLE);
+        } else {
+            syncItem.setVisible(false);
+            fab_add.setVisibility(View.GONE);
         }
     }
 
