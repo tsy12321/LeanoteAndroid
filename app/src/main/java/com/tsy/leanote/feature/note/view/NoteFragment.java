@@ -78,7 +78,7 @@ public class NoteFragment extends BaseFragment implements NoteAdapter.OnRecycler
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSyncEvent(SyncEvent event) {
         switch (event.getMsg()) {
-            case SyncEvent.MSG_SYNC:
+            case SyncEvent.MSG_REFRESH:
                 refreshNote();
                 break;
         }

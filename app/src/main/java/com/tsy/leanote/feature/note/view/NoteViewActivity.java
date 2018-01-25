@@ -122,7 +122,7 @@ public class NoteViewActivity extends BaseActivity implements View.OnClickListen
             //获取note内容
             if(StringUtils.isEmpty(mNote.getContent())) {
                 mLoadProgressDialog.show();
-                mNoteInteractor.getNoteContent(MyApplication.getInstance().getUserInfo(), mNoteId,
+                mNoteInteractor.getNoteAndContent(MyApplication.getInstance().getUserInfo(), mNoteId,
                         new NoteContract.GetNoteContentCallback() {
                             @Override
                             public void onSuccess(Note note) {
@@ -188,14 +188,18 @@ public class NoteViewActivity extends BaseActivity implements View.OnClickListen
 
             @Override
             public void onPageSelected(int position) {
-                MenuItem saveMenuItem = mToolbar.getMenu().findItem(R.id.action_other_operate);
-                if(saveMenuItem == null) {
+                MenuItem otherMenuItem = mToolbar.getMenu().findItem(R.id.action_other_operate);
+                if(otherMenuItem == null) {
                     return;
                 }
                 if(position == 0) {
-                    saveMenuItem.setVisible(false);
+                    otherMenuItem.setVisible(false);
+                    if(mExpandLayout.isExpanded()) {
+                        mExpandLayout.collapse(false);
+                        otherMenuItem.setIcon(R.drawable.ic_add_white_24dp);
+                    }
                 } else {
-                    saveMenuItem.setVisible(true);
+                    otherMenuItem.setVisible(true);
                 }
             }
 
@@ -422,12 +426,17 @@ public class NoteViewActivity extends BaseActivity implements View.OnClickListen
         updateArgvs.put("Content", mCurNoteContent);
 
         mLoadProgressDialog.show();
-        mNoteInteractor.updateNote(MyApplication.getInstance().getUserInfo(), mNoteId, updateArgvs, new NoteContract.UpdateNoteCallback() {
+        mNoteInteractor.updateNote(MyApplication.getInstance().getUserInfo(),
+                mNoteId, updateArgvs, mNoteFileInteractor.getAddNoteFiles(),
+                new NoteContract.UpdateNoteCallback() {
             @Override
             public void onSuccess(Note note) {
                 mLoadProgressDialog.dismiss();
                 ToastUtils.showShort(getApplicationContext(), R.string.note_save_success);
                 setEdit(false);
+                mNote = note;
+                loadFinish();
+                mViewpager.setCurrentItem(0, true);
 
                 EventBus.getDefault().post(new SyncEvent(SyncEvent.MSG_SYNC));
 

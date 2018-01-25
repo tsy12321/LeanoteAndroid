@@ -34,11 +34,9 @@ public class NoteFileInteractor implements NoteFileContract.Interactor {
     private MyOkHttp mMyOkHttp;
     private NoteFileDao mNoteFileDao;
 
-    private ArrayList<NoteFile> mAddNotes;
+    private ArrayList<NoteFile> mAddNoteFiles;
 
     private final String API_GET_IMAGE = "/api/file/getImage";       //获取图片
-
-    private final String DOWNLOAD_PIC_DIR = Environment.getExternalStorageDirectory() + "/com.tsy.leanote/files/";  //图片保存路径
 
     public NoteFileInteractor() {
         this(null);
@@ -74,6 +72,28 @@ public class NoteFileInteractor implements NoteFileContract.Interactor {
                 noteFile.setHasBody(noteFileJson.optBoolean("HasBody"));
                 noteFile.setIsAttach(noteFileJson.optBoolean("IsAttach"));
                 mNoteFileDao.insert(noteFile);
+            }
+        }
+    }
+
+    /**
+     * 更新localFile
+     * @param noteId
+     * @param noteFiles
+     */
+    @Override
+    public void updateLocalFile(String noteId, JSONArray noteFiles) {
+        if(noteFiles != null && noteFiles.length() > 0) {
+            for(int i = 0; i < noteFiles.length(); i ++) {
+                JSONObject noteFileJson = noteFiles.optJSONObject(i);
+
+                if(!StringUtils.isEmpty(noteFileJson.optString("LocalFileId"))) {
+                    File localFile = new File(getPicPath(noteFileJson.optString("LocalFileId")));
+                    File file = new File(getPicPath(noteFileJson.optString("FileId")));
+                    if(localFile.exists() && !file.exists()) {
+                        localFile.renameTo(file);
+                    }
+                }
             }
         }
     }
@@ -146,7 +166,13 @@ public class NoteFileInteractor implements NoteFileContract.Interactor {
         return "file://" + getPicPath(fileId);
     }
 
-    private String getPicPath(String fileId) {
+    /**
+     * 获取pic存取路径
+     * @param fileId
+     * @return
+     */
+    @Override
+    public String getPicPath(String fileId) {
         return mContext.getFilesDir() + "/" + fileId + ".png";
     }
 
@@ -178,18 +204,30 @@ public class NoteFileInteractor implements NoteFileContract.Interactor {
         NoteFile noteFile = new NoteFile();
         noteFile.setNoteid(noteId);
         noteFile.setLocalFileId(createLocalFileId());
+        noteFile.setFileId("");
         noteFile.setHasBody(true);
         noteFile.setIsAttach(false);
 
         //复制文件到指定目录
         FileUtils.copyFile(path, getPicPath(noteFile.getLocalFileId()));
 
-        if(mAddNotes == null) {
-            mAddNotes = new ArrayList<>();
+        if(mAddNoteFiles == null) {
+            mAddNoteFiles = new ArrayList<>();
         }
 
-        mAddNotes.add(noteFile);
+        mAddNoteFiles.add(noteFile);
 
         return EnvConstant.HOST + API_GET_IMAGE + "?fileId=" + noteFile.getLocalFileId();
     }
+
+    /**
+     * 获取新插入的noteFile
+     * @return
+     */
+    @Override
+    public ArrayList<NoteFile> getAddNoteFiles() {
+        return mAddNoteFiles;
+    }
+
+
 }

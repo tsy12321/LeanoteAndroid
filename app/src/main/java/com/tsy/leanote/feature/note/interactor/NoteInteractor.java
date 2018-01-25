@@ -6,6 +6,7 @@ import com.tsy.leanote.MyApplication;
 import com.tsy.leanote.R;
 import com.tsy.leanote.constant.EnvConstant;
 import com.tsy.leanote.feature.note.bean.Note;
+import com.tsy.leanote.feature.note.bean.NoteFile;
 import com.tsy.leanote.feature.note.contract.NoteContract;
 import com.tsy.leanote.feature.user.bean.UserInfo;
 import com.tsy.leanote.greendao.NoteDao;
@@ -16,7 +17,9 @@ import com.tsy.sdk.myutil.NetworkUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -331,12 +334,17 @@ public class NoteInteractor implements NoteContract.Interactor {
 
     /**
      * 更新Note信息
+     * @param userInfo 用户
      * @param noteId noteid
      * @param updateArgvs 更新参数
+     * @param noteFiles 所有文件元数据
      * @param callback
      */
     @Override
-    public void updateNote(final UserInfo userInfo, final String noteId, Map<String, String> updateArgvs, final NoteContract.UpdateNoteCallback callback) {
+    public void updateNote(final UserInfo userInfo, final String noteId,
+                           Map<String, String> updateArgvs,
+                           ArrayList<NoteFile> noteFiles,
+                           final NoteContract.UpdateNoteCallback callback) {
         if(!NetworkUtils.checkNetworkConnect(mContext)) {
             callback.onFailure(mContext.getString(R.string.app_no_network));
             return;
@@ -350,9 +358,15 @@ public class NoteInteractor implements NoteContract.Interactor {
         updateArgvs.put("token", userInfo.getToken());
         updateArgvs.put("Usn", String.valueOf(note.getUsn()));
 
-        mMyOkHttp.post()
+        Map<String, String> noteFilesBody = parseNoteFileRequestBody(noteFiles);
+        updateArgvs.putAll(noteFilesBody);
+
+        Map<String, File> noteFilesMultipart = parseNoteFileMultipart(noteFiles);
+
+        mMyOkHttp.upload()
                 .url(url)
                 .params(updateArgvs)
+                .files(noteFilesMultipart)
                 .tag(mTag)
                 .enqueue(new JsonResponseHandler() {
                     @Override
@@ -361,6 +375,10 @@ public class NoteInteractor implements NoteContract.Interactor {
                             callback.onFailure(response.optString("Msg"));
                             return;
                         }
+
+                        //更新本地localFile
+                        NoteFileInteractor noteFileInteractor = new NoteFileInteractor();
+                        noteFileInteractor.updateLocalFile(noteId, response.optJSONArray("Files"));
 
                         getNoteAndContent(userInfo, noteId, new NoteContract.GetNoteContentCallback() {
                             @Override
@@ -380,5 +398,50 @@ public class NoteInteractor implements NoteContract.Interactor {
                         callback.onFailure(error_msg);
                     }
                 });
+    }
+
+    /**
+     * 将文件数据转为请求元数据
+     * @param noteFiles
+     * @return
+     */
+    private Map<String, String> parseNoteFileRequestBody(ArrayList<NoteFile> noteFiles) {
+        HashMap<String, String> filesBody = new HashMap<>();
+
+        if(noteFiles != null) {
+            for(int i = 0; i < noteFiles.size(); i ++) {
+                NoteFile noteFile = noteFiles.get(i);
+
+                filesBody.put(String.format("Files[%s][LocalFileId]", i), noteFile.getLocalFileId());
+                filesBody.put(String.format("Files[%s][FileId]", i), noteFile.getFileId());
+                filesBody.put(String.format("Files[%s][HasBody]", i), String.valueOf(noteFile.getHasBody()));
+                filesBody.put(String.format("Files[%s][IsAttach]", i), String.valueOf(noteFile.getIsAttach()));
+            }
+        }
+
+        return filesBody;
+    }
+
+    /**
+     * 将文件数据转为multipart
+     * @param noteFiles
+     * @return
+     */
+    private Map<String, File> parseNoteFileMultipart(ArrayList<NoteFile> noteFiles) {
+        HashMap<String, File> filesBody = new HashMap<>();
+
+        if(noteFiles != null) {
+            NoteFileInteractor noteFileInteractor = new NoteFileInteractor();
+
+            for (int i = 0; i < noteFiles.size(); i++) {
+                NoteFile noteFile = noteFiles.get(i);
+
+                if (noteFile.getHasBody()) {
+                    filesBody.put(String.format("FileDatas[%s]", noteFile.getLocalFileId()), new File(noteFileInteractor.getPicPath(noteFile.getLocalFileId())));
+                }
+            }
+        }
+
+        return filesBody;
     }
 }

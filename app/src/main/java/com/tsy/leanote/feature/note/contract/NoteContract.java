@@ -2,6 +2,7 @@ package com.tsy.leanote.feature.note.contract;
 
 import com.tsy.leanote.base.BaseInteractorCallback;
 import com.tsy.leanote.feature.note.bean.Note;
+import com.tsy.leanote.feature.note.bean.NoteFile;
 import com.tsy.leanote.feature.user.bean.UserInfo;
 
 import java.util.ArrayList;
@@ -72,9 +73,13 @@ public interface NoteContract {
          * @param userInfo 用户
          * @param noteId noteid
          * @param updateArgvs 更新参数
+         * @param noteFiles 所有文件元数据
          * @param callback
          */
-        void updateNote(UserInfo userInfo, String noteId, Map<String, String> updateArgvs, UpdateNoteCallback callback);
+        void updateNote(UserInfo userInfo, String noteId,
+                        Map<String, String> updateArgvs,
+                        ArrayList<NoteFile> noteFiles,
+                        UpdateNoteCallback callback);
     }
 
     interface GetNotesCallback extends BaseInteractorCallback {

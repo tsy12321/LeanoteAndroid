@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.tsy.leanote.R;
 import com.tsy.leanote.base.BaseFragment;
+import com.tsy.leanote.constant.EnvConstant;
 import com.tsy.leanote.eventbus.NoteEvent;
 import com.tsy.leanote.feature.note.contract.NoteFileContract;
 import com.tsy.leanote.widget.MarkdownPreviewView;
@@ -103,14 +104,10 @@ public class NoteViewPreviewFragment extends BaseFragment {
     //把文章内容图片格式转化为本地图片格式
     private String parseContent(String content) {
         NoteFileContract.Interactor noteFileInteractor = mNoteViewActivity.getNoteFileInteractor();
-        content = content.replaceAll("!\\[(.*)\\]\\(http:\\/\\/leanote.com\\/file\\/outputImage\\?fileId=(.*)\\)",
-                "![$1](" + noteFileInteractor.getPicWebviewPath("$2") + ")");
-        content = content.replaceAll("!\\[(.*)\\]\\(http:\\/\\/leanote.com\\/api\\/file\\/getImage\\?fileId=(.*)\\)",
-                "![$1](" + noteFileInteractor.getPicWebviewPath("$2") + ")");
-        content = content.replaceAll("!\\[(.*)\\]\\(https:\\/\\/leanote.com\\/file\\/outputImage\\?fileId=(.*)\\)",
-                "![$1](" + noteFileInteractor.getPicWebviewPath("$2") + ")");
-        content = content.replaceAll("!\\[(.*)\\]\\(https:\\/\\/leanote.com\\/api\\/file\\/getImage\\?fileId=(.*)\\)",
-                "![$1](" + noteFileInteractor.getPicWebviewPath("$2") + ")");
+        content = content.replaceAll("!\\[(.*)]\\((.*)/file/outputImage\\?fileId=(.*)\\)",
+                "![$1](" + noteFileInteractor.getPicWebviewPath("$3") + ")");
+        content = content.replaceAll("!\\[(.*)]\\((.*)/api/file/getImage\\?fileId=(.*)\\)",
+                "![$1](" + noteFileInteractor.getPicWebviewPath("$3") + ")");
 
         return content;
     }

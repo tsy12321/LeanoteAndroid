@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -43,6 +44,8 @@ import com.tsy.leanote.glide.CropCircleTransformation;
 import com.tsy.sdk.myutil.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -84,6 +87,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
 
         mSyncProgressDialog = new ProgressDialog(this);
         mSyncProgressDialog.setCancelable(false);
@@ -125,6 +129,12 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
         //每次进入同步一次
         doSync();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -259,6 +269,15 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSyncEvent(SyncEvent event) {
+        switch (event.getMsg()) {
+            case SyncEvent.MSG_SYNC:
+                doSync();
+                break;
+        }
+    }
+
     //同步
     private void doSync() {
         mSyncProgressDialog.show();
@@ -285,7 +304,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
                                 Logger.i("Sync Usn %s", lastSyncUsn);
 
-                                EventBus.getDefault().post(new SyncEvent(SyncEvent.MSG_SYNC));
+                                EventBus.getDefault().post(new SyncEvent(SyncEvent.MSG_REFRESH));
                             }
 
                             @Override

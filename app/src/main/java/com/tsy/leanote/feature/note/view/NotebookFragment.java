@@ -162,7 +162,7 @@ public class NotebookFragment extends BaseFragment implements NotebookAdapter.On
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSyncEvent(SyncEvent event) {
         switch (event.getMsg()) {
-            case SyncEvent.MSG_SYNC:
+            case SyncEvent.MSG_REFRESH:
                 refreshNotebooks();
                 break;
         }

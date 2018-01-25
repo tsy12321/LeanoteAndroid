@@ -10,6 +10,9 @@ import com.tsy.leanote.greendao.DaoMaster;
 import com.tsy.leanote.greendao.DaoSession;
 import com.tsy.sdk.myokhttp.MyOkHttp;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+
 /**
  * Created by tsy on 2016/12/13.
  */
@@ -42,21 +45,21 @@ public class MyApplication extends Application {
     }
 
     private void initMyOkHttp() {
-//        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-//        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 //
 //        //持久化存储cookie
 //        ClearableCookieJar cookieJar =
 //                new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(getApplicationContext()));
 //
 //        //自定义OkHttp
-//        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
 //                .cookieJar(cookieJar)       //设置开启cookie
-//                .addInterceptor(logging)            //设置开启log
-//                .build();
-//        mMyOkHttp = new MyOkHttp(okHttpClient);
+                .addInterceptor(logging)            //设置开启log
+                .build();
+        mMyOkHttp = new MyOkHttp(okHttpClient);
 
-        mMyOkHttp = new MyOkHttp();
+//        mMyOkHttp = new MyOkHttp();
     }
 
     /**

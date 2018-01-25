@@ -5,5 +5,6 @@ package com.tsy.leanote.constant;
  */
 
 public class EnvConstant {
-    public static final String HOST = "https://leanote.com";
+//    public static final String HOST = "https://leanote.com";
+    public static final String HOST = "https://leanote.meetwhy.com";
 }
