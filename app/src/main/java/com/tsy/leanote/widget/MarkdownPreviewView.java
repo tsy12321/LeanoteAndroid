@@ -30,6 +30,8 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.tsy.leanote.widget.webview.WebviewActivity;
+
 /**
  * Markdown View
  * The type Markdown preview view.
@@ -125,9 +127,7 @@ public class MarkdownPreviewView extends NestedScrollView {
         }
 
         public final boolean shouldOverrideUrlLoading(WebView webView, String url) {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(url));
-            mContext.startActivity(intent);
+            mContext.startActivity(WebviewActivity.createIntent(mMarkdownPreviewView.getContext(), url));
             return true;
         }
     }
