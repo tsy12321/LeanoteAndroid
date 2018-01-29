@@ -70,7 +70,7 @@ public class NoteInteractor implements NoteContract.Interactor {
             return;
         }
 
-        String url = EnvConstant.HOST + API_GET_NOTE;
+        String url = EnvConstant.getHOST() + API_GET_NOTE;
 
         mMyOkHttp.get()
                 .url(url)
@@ -130,7 +130,7 @@ public class NoteInteractor implements NoteContract.Interactor {
             return;
         }
 
-        String url = EnvConstant.HOST + API_SYNC;
+        String url = EnvConstant.getHOST() + API_SYNC;
 
 //        Log.d("tsy", "note do sync " + userInfo.getLast_usn());
         mMyOkHttp.get()
@@ -237,7 +237,7 @@ public class NoteInteractor implements NoteContract.Interactor {
             return;
         }
 
-        String url = EnvConstant.HOST + API_GET_NOTE_CONTENT;
+        String url = EnvConstant.getHOST() + API_GET_NOTE_CONTENT;
 
         mMyOkHttp.get()
                 .url(url)
@@ -279,7 +279,7 @@ public class NoteInteractor implements NoteContract.Interactor {
             return;
         }
 
-        String url = EnvConstant.HOST + API_GET_NOTE_AND_CONTENT;
+        String url = EnvConstant.getHOST() + API_GET_NOTE_AND_CONTENT;
 
         mMyOkHttp.get()
                 .url(url)
@@ -374,7 +374,7 @@ public class NoteInteractor implements NoteContract.Interactor {
 
         final Note note = getNote(noteId);
 
-        String url = EnvConstant.HOST + API_UPDATE_NOTE;
+        String url = EnvConstant.getHOST() + API_UPDATE_NOTE;
 
         updateArgvs.put("NoteId", noteId);
         updateArgvs.put("token", userInfo.getToken());
@@ -509,7 +509,7 @@ public class NoteInteractor implements NoteContract.Interactor {
                            final String content,
                            ArrayList<NoteFile> noteFiles,
                            NoteContract.UpdateNoteCallback callback) {
-        String url = EnvConstant.HOST + API_ADD_NOTE;
+        String url = EnvConstant.getHOST() + API_ADD_NOTE;
 
         Map<String, String> param = new HashMap<>();
         param.put("token", userInfo.getToken());

@@ -1,13 +1,18 @@
 package com.tsy.leanote.feature.user.view;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.tsy.leanote.HomeActivity;
 import com.tsy.leanote.R;
 import com.tsy.leanote.base.BaseActivity;
+import com.tsy.leanote.constant.EnvConstant;
 import com.tsy.leanote.feature.user.bean.UserInfo;
 import com.tsy.leanote.feature.user.contract.UserContract;
 import com.tsy.leanote.feature.user.interactor.UserInteractor;
@@ -28,9 +33,15 @@ public class RegisterActivity extends BaseActivity {
     ImageView mImgPwdVisible;
     @BindView(R.id.edit_password_confim)
     EditText mEditPasswordConfim;
+    @BindView(R.id.rl_server)
+    RelativeLayout mRlServer;
+    @BindView(R.id.edit_server)
+    EditText mEditServer;
 
     private boolean mPwdVisible = false;
     private UserContract.Interactor mUserInteractor;
+    private String mSelfServer;
+    private static final String EXTRA_SELFSERVER = "selfserver";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +49,12 @@ public class RegisterActivity extends BaseActivity {
         setContentView(R.layout.activity_register);
 
         ButterKnife.bind(this);
+
+        mSelfServer = getIntent().getStringExtra(EXTRA_SELFSERVER);
+        if(!StringUtils.isEmpty(mSelfServer)) {
+            mRlServer.setVisibility(View.VISIBLE);
+            mEditServer.setText(mSelfServer);
+        }
 
         mUserInteractor = new UserInteractor();
     }
@@ -85,7 +102,12 @@ public class RegisterActivity extends BaseActivity {
             return;
         }
 
-        mUserInteractor.register(email, pwd, new UserContract.UserCallback() {
+        String host = EnvConstant.HOST_LEANOTE;
+        if(!StringUtils.isEmpty(mSelfServer)) {
+            host = mSelfServer;
+        }
+
+        mUserInteractor.register(host, email, pwd, new UserContract.UserCallback() {
             @Override
             public void onSuccess(UserInfo userInfo) {
                 startActivity(HomeActivity.createIntent(RegisterActivity.this));
@@ -101,5 +123,15 @@ public class RegisterActivity extends BaseActivity {
     @OnClick(R.id.txt_back_login)
     public void backLogin() {
         finish();
+    }
+
+    public static Intent createIntent(Context context) {
+        return new Intent(context, RegisterActivity.class);
+    }
+
+    public static Intent createIntent(Context context, String selfServer) {
+        Intent intent = new Intent(context, RegisterActivity.class);
+        intent.putExtra(EXTRA_SELFSERVER, selfServer);
+        return intent;
     }
 }

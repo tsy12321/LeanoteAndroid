@@ -40,10 +40,14 @@
     <string name="register">注册</string>
     <string name="confirm">确认</string>
     <string name="cancel">取消</string>
+    <string name="self_server">自建服务器</string>
+    <string name="leanote_server">Leanote服务器</string>
+    <string name="server_address">例：https://leanote.com</string>
 
     <!--user-->
     <string name="user_email_empty">邮箱不能为空</string>
     <string name="user_pwd_empty">密码不能为空</string>
+    <string name="address_empty">地址不能为空</string>
     <string name="user_create_account">创建leanote账户</string>
     <string name="user_back_login">返回登录</string>
     <string name="user_confirm_pwd">确认密码</string>

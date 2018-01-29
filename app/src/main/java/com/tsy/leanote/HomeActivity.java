@@ -186,7 +186,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
         if(mBlogWebviewFragment == null) {
             mBlogWebviewFragment = new WebviewFragment();
-            mBlogWebviewFragment.setArguments(WebviewFragment.createArguments(EnvConstant.HOST + "/blog/" + mUserInfo.getEmail()));
+            mBlogWebviewFragment.setArguments(WebviewFragment.createArguments(EnvConstant.getHOST() + "/blog/" + mUserInfo.getEmail()));
 
             transaction.add(R.id.fl_content, mBlogWebviewFragment, "BlogWebviewFragment");
         }

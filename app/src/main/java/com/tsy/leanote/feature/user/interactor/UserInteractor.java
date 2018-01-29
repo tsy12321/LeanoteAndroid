@@ -50,18 +50,19 @@ public class UserInteractor implements UserContract.Interactor {
 
     /**
      * 登录
+     * @param host
      * @param email
      * @param pwd
      * @param callback
      */
     @Override
-    public void login(String email, String pwd, final UserContract.UserCallback callback) {
+    public void login(String host, String email, String pwd, final UserContract.UserCallback callback) {
         if(!NetworkUtils.checkNetworkConnect(mContext)) {
             callback.onFailure(mContext.getString(R.string.app_no_network));
             return;
         }
 
-        String url = EnvConstant.HOST + API_LOGIN;
+        String url = host + API_LOGIN;
         mMyOkHttp.get()
                 .url(url)
                 .addParam("email", email)
@@ -85,6 +86,12 @@ public class UserInteractor implements UserContract.Interactor {
 
                         //保存最近登录email
                         SharePreferenceUtils.putString(mContext, SharePreConstant.KEY_LAST_LOGIN_EMAIL, response.optString("Email"));
+
+                        //保存最近登录host
+                        SharePreferenceUtils.putString(mContext, SharePreConstant.KEY_LAST_LOGIN_HOST, host);
+
+                        //设置当前host
+                        EnvConstant.setHOST(host);
 
                         //获取一次用户信息
                         getUserInfo(userInfo.getUid(), userInfo.getToken(), callback);
@@ -110,7 +117,7 @@ public class UserInteractor implements UserContract.Interactor {
             return;
         }
 
-        String url = EnvConstant.HOST + API_GET_USER_IFNO;
+        String url = EnvConstant.getHOST() + API_GET_USER_IFNO;
         mMyOkHttp.get()
                 .url(url)
                 .addParam("userId", uid)
@@ -167,18 +174,19 @@ public class UserInteractor implements UserContract.Interactor {
 
     /**
      * 注册
+     * @param host
      * @param email
      * @param pwd
      * @param callback
      */
     @Override
-    public void register(final String email, final String pwd, final UserContract.UserCallback callback) {
+    public void register(final String host, final String email, final String pwd, final UserContract.UserCallback callback) {
         if(!NetworkUtils.checkNetworkConnect(mContext)) {
             callback.onFailure(mContext.getString(R.string.app_no_network));
             return;
         }
 
-        String url = EnvConstant.HOST + API_REGISTER;
+        String url = host + API_REGISTER;
         mMyOkHttp.post()
                 .url(url)
                 .addParam("email", email)
@@ -193,7 +201,7 @@ public class UserInteractor implements UserContract.Interactor {
                         }
 
                         //自动调用登录
-                        login(email, pwd, callback);
+                        login(host, email, pwd, callback);
                     }
 
                     @Override
@@ -215,7 +223,7 @@ public class UserInteractor implements UserContract.Interactor {
             return;
         }
 
-        String url = EnvConstant.HOST + API_LOGOUT;
+        String url = EnvConstant.getHOST() + API_LOGOUT;
         mMyOkHttp.get()
                 .url(url)
                 .addParam("token", userInfo.getToken())
@@ -252,7 +260,7 @@ public class UserInteractor implements UserContract.Interactor {
             return;
         }
 
-        String url = EnvConstant.HOST + API_SYNC;
+        String url = EnvConstant.getHOST() + API_SYNC;
         mMyOkHttp.get()
                 .url(url)
                 .addParam("token", userInfo.getToken())

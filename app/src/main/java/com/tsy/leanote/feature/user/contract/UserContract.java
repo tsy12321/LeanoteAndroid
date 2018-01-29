@@ -13,11 +13,12 @@ public interface UserContract {
     interface Interactor {
         /**
          * 登录
+         * @param host
          * @param email
          * @param pwd
          * @param callback
          */
-        void login(String email, String pwd, UserCallback callback);
+        void login(String host, String email, String pwd, UserCallback callback);
 
         /**
          * 获取用户信息
@@ -35,11 +36,12 @@ public interface UserContract {
 
         /**
          * 注册
+         * @param host
          * @param email
          * @param pwd
          * @param callback
          */
-        void register(String email, String pwd, UserCallback callback);
+        void register(String host, String email, String pwd, UserCallback callback);
 
         /**
          * 退出

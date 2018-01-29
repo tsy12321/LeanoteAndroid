@@ -117,6 +117,36 @@
                 android:tint="#668eaa" />
         </RelativeLayout>
 
+        <RelativeLayout
+            android:id="@+id/rl_server"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/edit_server"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/LoginEditText"
+                android:hint="@string/server_address"
+                android:enabled="false"/>
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentEnd="false"
+                android:layout_alignParentRight="false"
+                android:layout_alignParentStart="false"
+                android:layout_alignParentLeft="false"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="14dp"
+                android:src="@drawable/ic_cloud_black_24dp"
+                android:tint="#668eaa" />
+
+        </RelativeLayout>
+
         <Button
             android:id="@+id/btn_register"
             android:layout_width="match_parent"

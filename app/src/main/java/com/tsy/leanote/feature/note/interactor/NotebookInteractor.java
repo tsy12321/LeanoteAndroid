@@ -64,7 +64,7 @@ public class NotebookInteractor implements NotebookContract.Interactor {
             return;
         }
 
-        String url = EnvConstant.HOST + API_GET_ALL;
+        String url = EnvConstant.getHOST() + API_GET_ALL;
 
         mMyOkHttp.get()
                 .url(url)
@@ -122,7 +122,7 @@ public class NotebookInteractor implements NotebookContract.Interactor {
             return;
         }
 
-        String url = EnvConstant.HOST + API_SYNC;
+        String url = EnvConstant.getHOST() + API_SYNC;
 
 //        Log.d("tsy", "notebook do sync " + userInfo.getLast_usn());
         mMyOkHttp.get()
@@ -251,7 +251,7 @@ public class NotebookInteractor implements NotebookContract.Interactor {
             return;
         }
 
-        String url = EnvConstant.HOST + API_ADD_NOTEBOOK;
+        String url = EnvConstant.getHOST() + API_ADD_NOTEBOOK;
 
         Map<String, String> params = new HashMap<>();
         params.put("token", userInfo.getToken());

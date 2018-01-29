@@ -127,7 +127,7 @@ public class NoteFileInteractor implements NoteFileContract.Interactor {
             if(!noteFile.getIsAttach()) {
                 if(!new File(getPicPath(noteFile.getFileId())).exists()
                         || new File(getPicPath(noteFile.getFileId())).length() == 0L) {
-                    String downloadUrl = EnvConstant.HOST + API_GET_IMAGE + "?fileId=" + noteFile.getFileId() + "&token=" + userInfo.getToken();
+                    String downloadUrl = EnvConstant.getHOST() + API_GET_IMAGE + "?fileId=" + noteFile.getFileId() + "&token=" + userInfo.getToken();
                     mMyOkHttp.download()
                             .tag(mTag)
                             .url(downloadUrl)
@@ -216,7 +216,7 @@ public class NoteFileInteractor implements NoteFileContract.Interactor {
 
         mAddNoteFiles.add(noteFile);
 
-        return EnvConstant.HOST + API_GET_IMAGE + "?fileId=" + noteFile.getLocalFileId();
+        return EnvConstant.getHOST() + API_GET_IMAGE + "?fileId=" + noteFile.getLocalFileId();
     }
 
     /**

@@ -6,4 +6,5 @@ package com.tsy.leanote.constant;
 
 public class SharePreConstant {
     public static final String KEY_LAST_LOGIN_EMAIL = "last_login_email";
+    public static final String KEY_LAST_LOGIN_HOST = "last_login_host";
 }
