@@ -13,6 +13,8 @@ import com.tsy.leanote.widget.loadsir.EmptyCallback;
 import com.tsy.leanote.widget.loadsir.ErrorCallback;
 import com.tsy.leanote.widget.loadsir.LoadingCallback;
 import com.tsy.sdk.myokhttp.MyOkHttp;
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.commonsdk.UMConfigure;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -40,6 +42,9 @@ public class MyApplication extends Application {
         }
         LeakCanary.install(this);
 
+        MobclickAgent.setScenarioType(getApplicationContext(), MobclickAgent.EScenarioType.E_UM_NORMAL);
+        UMConfigure.init(this, "5a6ef6a6f29d982509000138", "github", UMConfigure.DEVICE_TYPE_PHONE, null);
+
         mMyApplication = this;
         mContext = getApplicationContext();
 
@@ -55,21 +60,18 @@ public class MyApplication extends Application {
     }
 
     private void initMyOkHttp() {
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-//
-//        //持久化存储cookie
-//        ClearableCookieJar cookieJar =
-//                new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(getApplicationContext()));
-//
-//        //自定义OkHttp
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-//                .cookieJar(cookieJar)       //设置开启cookie
-                .addInterceptor(logging)            //设置开启log
-                .build();
-        mMyOkHttp = new MyOkHttp(okHttpClient);
+        if(BuildConfig.DEBUG) {
+            //自定义OkHttp
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-//        mMyOkHttp = new MyOkHttp();
+            OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .addInterceptor(logging)            //设置开启log
+                    .build();
+            mMyOkHttp = new MyOkHttp(okHttpClient);
+        } else {
+            mMyOkHttp = new MyOkHttp();
+        }
     }
 
     /**

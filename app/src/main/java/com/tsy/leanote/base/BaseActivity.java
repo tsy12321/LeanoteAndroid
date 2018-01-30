@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.tsy.leanote.MyApplication;
 import com.tsy.leanote.R;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -152,6 +153,18 @@ public class BaseActivity extends AppCompatActivity implements EasyPermissions.P
                 .setRequestCode(requestCode)
                 .build()
                 .show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     @Override
