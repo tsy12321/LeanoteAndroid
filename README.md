@@ -5,7 +5,7 @@
 
 > Leanote笔记Android客户端
 
-[版本更新记录]()
+[版本更新记录](https://github.com/tsy12321/LeanoteAndroid/releases)
 
 ## 下载地址
 
@@ -29,9 +29,21 @@
 
 ### 登录、注册、忘记密码、自建服务器
 
+![](https://github.com/tsy12321/LeanoteAndroid/blob/master/images/%E7%99%BB%E5%BD%951.png)
+![](https://github.com/tsy12321/LeanoteAndroid/blob/master/images/%E7%99%BB%E5%BD%952.png)
+![](https://github.com/tsy12321/LeanoteAndroid/blob/master/images/%E6%B3%A8%E5%86%8C.png)
+
 ### 首页、列表页
 
+![](https://github.com/tsy12321/LeanoteAndroid/blob/master/images/%E9%A6%96%E9%A1%B51.png)
+![](https://github.com/tsy12321/LeanoteAndroid/blob/master/images/%E9%A6%96%E9%A1%B52.png)
+![](https://github.com/tsy12321/LeanoteAndroid/blob/master/images/%E9%A6%96%E9%A1%B53.png)
+
 ### 新增、编辑、浏览笔记
+
+![](https://github.com/tsy12321/LeanoteAndroid/blob/master/images/%E6%96%B0%E5%A2%9E%E7%AC%94%E8%AE%B0.png)
+![](https://github.com/tsy12321/LeanoteAndroid/blob/master/images/%E6%B5%8F%E8%A7%88%E7%AC%94%E8%AE%B0.png)
+![](https://github.com/tsy12321/LeanoteAndroid/blob/master/images/%E7%BC%96%E8%BE%91%E7%AC%94%E8%AE%B0.png)
 
 ## 感谢
 
