@@ -1,15 +1,54 @@
-# Leanote-Android
+# LeanoteT
 
+[![GitHub release](https://img.shields.io/github/release/qubyte/rubidium.svg)]()
 [![License](https://img.shields.io/badge/license-Apache%202-green.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
 > Leanote笔记Android客户端
 
-## About Me
-简书地址：http://www.jianshu.com/users/21716b19302d/latest_articles
+[版本更新记录]()
 
-微信公众号
+## 下载地址
 
-![我的公众号](https://github.com/tsy12321/PayAndroid/blob/master/wxmp_avatar.jpg)
+> 第一版稳定后会陆续上线各个应用市场
+
+### Github
+
+## 功能完成计划
+
+- [x] 登录、注册、忘记密码、退出
+- [x] 自建服务器
+- [x] 笔记列表显示、笔记本树状列表显示
+- [x] 浏览、添加、编辑笔记（Markdown语法）
+- [x] 博客页面、探索页面
+- [ ] 修改个人信息
+- [ ] 添加、编辑、移动、删除笔记本
+- [ ] 移动、删除笔记
+- [ ] Tag功能
+
+## 已完成功能截图
+
+### 登录、注册、忘记密码、自建服务器
+
+### 首页、列表页
+
+### 新增、编辑、浏览笔记
+
+## 感谢
+
+- [Glide - 图片加载]](https://github.com/bumptech/glide)
+- [Easypermission - 权限管理](https://github.com/googlesamples/easypermissions)
+- [Eventbus - 消息通知](https://github.com/greenrobot/EventBus)
+- [ButterKnife - view注入](https://github.com/JakeWharton/butterknife)
+- [GreenDao - 数据库](https://github.com/greenrobot/greenDAO)
+- [GreenDaoUpgradeHelper - 数据库更新](https://github.com/yuweiguocn/GreenDaoUpgradeHelper)
+- [Logger - log记录](https://github.com/orhanobut/logger)
+- [MarkdownEditors - Markdown编辑器](https://github.com/qinci/MarkdownEditors)
+- [LoadSir - loading](https://github.com/KingJA/LoadSir)
+- [Leakcanary - 内存泄露检查](https://github.com/square/leakcanary)
+
+感谢默默为开源不遗余力做出努力的小伙伴，本项目是站在巨人的肩膀上。
+
+**欢迎star、fork**
 
 License
 -------

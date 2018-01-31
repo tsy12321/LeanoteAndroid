@@ -12,7 +12,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <!--app-->
-    <string name="app_name">蚂蚁笔记</string>
+    <string name="app_name">LeanoteT</string>
     <string name="app_no_network">网络未连接</string>
 
     <!--sync-->

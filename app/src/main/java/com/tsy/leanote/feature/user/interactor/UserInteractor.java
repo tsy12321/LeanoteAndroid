@@ -139,7 +139,11 @@ public class UserInteractor implements UserContract.Interactor {
 
                         userInfo.setUsername(response.optString("Username"));
                         userInfo.setEmail(response.optString("Email"));
-                        userInfo.setLogo(response.optString("Logo"));
+                        String logo = response.optString("Logo");
+                        if(logo.length() > 0 && !logo.contains("http")) {
+                            logo = EnvConstant.getHOST() + logo;
+                        }
+                        userInfo.setLogo(logo);
                         userInfo.setVerified(response.optBoolean("Verified"));
                         userInfo.setLast_usn(0);
 
