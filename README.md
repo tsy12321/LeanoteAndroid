@@ -13,6 +13,8 @@
 
 ### Github
 
+![](https://github.com/tsy12321/LeanoteAndroid/blob/master/images/leanotet-0.1.png)
+
 ## 功能完成计划
 
 - [x] 登录、注册、忘记密码、退出
@@ -47,7 +49,7 @@
 
 ## 感谢
 
-- [Glide - 图片加载]](https://github.com/bumptech/glide)
+- [Glide - 图片加载](https://github.com/bumptech/glide)
 - [Easypermission - 权限管理](https://github.com/googlesamples/easypermissions)
 - [Eventbus - 消息通知](https://github.com/greenrobot/EventBus)
 - [ButterKnife - view注入](https://github.com/JakeWharton/butterknife)
@@ -61,6 +63,8 @@
 感谢默默为开源不遗余力做出努力的小伙伴，本项目是站在巨人的肩膀上。
 
 **欢迎star、fork**
+
+***ps:本项目UI设计完全基于 Google Material Design 的一些控件，如果有设计童鞋有兴趣欢迎给一些设计建议！***
 
 License
 -------
