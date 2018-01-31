@@ -1,6 +1,6 @@
 # LeanoteT
 
-[![GitHub release](https://img.shields.io/github/release/qubyte/rubidium.svg)](https://github.com/tsy12321/LeanoteAndroid/releases)
+[![GitHub release](https://img.shields.io/github/release/tsy12321/LeanoteAndroid.svg)](https://github.com/tsy12321/LeanoteAndroid/releases)
 [![License](https://img.shields.io/badge/license-Apache%202-green.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
 > Leanote笔记Android客户端
