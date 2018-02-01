@@ -84,6 +84,7 @@ public class NoteViewActivity extends BaseActivity implements View.OnClickListen
     private String mCurNoteContent = "";    //当前编辑区content
     private String mCurNotebookid = "";    //当前编辑区笔记本id
     private String mCurNotebookpath = "";    //当前编辑区笔记本path
+    private boolean mCurMarkdown = true;      //当前是否markdown笔记
 
     //初始加载多张图片
     private int mTotalPics = 0;
@@ -272,6 +273,7 @@ public class NoteViewActivity extends BaseActivity implements View.OnClickListen
         mCurNoteContent = mNote.getContent();
         mCurNotebookid = mNote.getNotebookid();
         mCurNotebookpath = mNotebookInteractor.getNotebookPath(mNote.getNotebookid());
+        mCurMarkdown = mNote.getIs_markdown();
 
         EventBus.getDefault().post(new NoteEvent(NoteEvent.MSG_INIT));
     }
@@ -321,6 +323,10 @@ public class NoteViewActivity extends BaseActivity implements View.OnClickListen
 
     public void setCurNotebookpath(String curNotebookpath) {
         mCurNotebookpath = curNotebookpath;
+    }
+
+    public boolean isCurMarkdown() {
+        return mCurMarkdown;
     }
 
     public NoteFileContract.Interactor getNoteFileInteractor() {

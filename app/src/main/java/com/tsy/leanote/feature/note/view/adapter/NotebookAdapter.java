@@ -67,6 +67,8 @@ public class NotebookAdapter extends RecyclerView.Adapter<NotebookAdapter.MyView
 
         holder.itemView.setTag(position);
 
+
+        holder.mImgMarkdown.setVisibility(View.GONE);
         //显示title
         String title = "";
         if(myNotebook.getNotebook() != null) {
@@ -84,6 +86,7 @@ public class NotebookAdapter extends RecyclerView.Adapter<NotebookAdapter.MyView
 
             //显示title
             title = myNotebook.getNote().getTitle();
+            holder.mImgMarkdown.setVisibility(myNotebook.getNote().getIs_markdown()?View.VISIBLE:View.GONE);
         }
 
         holder.mName.setText(title);
@@ -137,6 +140,9 @@ public class NotebookAdapter extends RecyclerView.Adapter<NotebookAdapter.MyView
 
         @BindView(R.id.img_logo)
         ImageView mImgLogo;
+
+        @BindView(R.id.img_markdown)
+        ImageView mImgMarkdown;
 
         MyViewHolder(View view) {
             super(view);

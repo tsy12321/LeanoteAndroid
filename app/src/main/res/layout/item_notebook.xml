@@ -26,6 +26,16 @@
         android:textSize="16sp"/>
 
     <ImageView
+        android:id="@+id/img_markdown"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@id/txt_name"
+        android:layout_centerVertical="true"
+        android:visibility="gone"
+        android:src="@drawable/vector_drawable_icon_m"/>
+
+    <ImageView
         android:id="@+id/img_arrow_down"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -5,6 +5,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tsy.leanote.R;
@@ -63,6 +65,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
 
         holder.itemView.setTag(position);
         holder.mTitle.setText(myNote.getTitle());
+        holder.mImgMarkdown.setVisibility(myNote.getIs_markdown()?View.VISIBLE:View.GONE);
 
         String updateTime = myNote.getUpdated_time().replace('T', ' ');
         updateTime = updateTime.substring(0, 19);
@@ -81,6 +84,9 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.MyViewHolder> 
 
         @BindView(R.id.txt_time)
         TextView mTime;
+
+        @BindView(R.id.img_markdown)
+        ImageView mImgMarkdown;
 
         MyViewHolder(View view) {
             super(view);

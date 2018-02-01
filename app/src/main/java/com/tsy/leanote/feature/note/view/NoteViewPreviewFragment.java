@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tsy.leanote.R;
@@ -31,6 +32,9 @@ public class NoteViewPreviewFragment extends BaseFragment {
 
     @BindView(R.id.txtTitle)
     TextView mTxtTitle;
+
+    @BindView(R.id.img_markdown)
+    ImageView mImgMarkdown;
 
     @BindView(R.id.markdownPreviewView)
     MarkdownPreviewView mMarkdownPreviewView;
@@ -83,6 +87,8 @@ public class NoteViewPreviewFragment extends BaseFragment {
             case NoteEvent.MSG_EDITOR:
                 refreshView();
                 break;
+            default:
+                break;
         }
     }
 
@@ -92,6 +98,7 @@ public class NoteViewPreviewFragment extends BaseFragment {
             return;
         }
         mTxtTitle.setText(mNoteViewActivity.getCurNoteTitle());
+        mImgMarkdown.setVisibility(mNoteViewActivity.isCurMarkdown()?View.VISIBLE:View.GONE);
         String content = parseContent(mNoteViewActivity.getCurNoteContent());
         mMarkdownPreviewView.parseMarkdown(content, true);
         if(StringUtils.isEmpty(mNoteViewActivity.getCurNotebookpath())) {

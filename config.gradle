@@ -1,0 +1,14 @@
+//配置信息读取
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+ext {
+    signingConfigs = [
+            storeFile : properties.getProperty('storeFile'),
+            storePassword : properties.getProperty('storePassword'),
+            keyAlias : properties.getProperty('keyAlias'),
+            keyPassword : properties.getProperty('keyPassword'),
+    ]
+
+    umengAppkey = properties.getProperty('umengAppkey')?properties.getProperty('umengAppkey'):'';
+}

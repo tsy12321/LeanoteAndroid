@@ -2,6 +2,7 @@ package com.tsy.leanote;
 
 import android.app.Application;
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.kingja.loadsir.core.LoadSir;
 import com.squareup.leakcanary.LeakCanary;
@@ -35,23 +36,31 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
-            return;
+        //内存泄露分析初始化
+        if(BuildConfig.DEBUG) {
+            if (LeakCanary.isInAnalyzerProcess(this)) {
+                // This process is dedicated to LeakCanary for heap analysis.
+                // You should not init your app in this process.
+                return;
+            }
+            LeakCanary.install(this);
         }
-        LeakCanary.install(this);
 
-        MobclickAgent.setScenarioType(getApplicationContext(), MobclickAgent.EScenarioType.E_UM_NORMAL);
-        UMConfigure.init(this, "5a6ef6a6f29d982509000138", "github", UMConfigure.DEVICE_TYPE_PHONE, null);
+        //umeng统计初始化
+        if(!TextUtils.isEmpty(BuildConfig.UMENG_APPKEY)) {
+            MobclickAgent.setScenarioType(getApplicationContext(), MobclickAgent.EScenarioType.E_UM_NORMAL);
+            UMConfigure.init(this, BuildConfig.UMENG_APPKEY, "github", UMConfigure.DEVICE_TYPE_PHONE, null);
+        }
 
         mMyApplication = this;
         mContext = getApplicationContext();
 
+        //数据库初始化
         DBHelper devOpenHelper = new DBHelper(getApplicationContext(), "leanote.db");
         DaoMaster daoMaster = new DaoMaster(devOpenHelper.getWritableDb());
         mDaoSession = daoMaster.newSession();
 
+        //loading初始化
         LoadSir.beginBuilder()
                 .addCallback(new ErrorCallback())
                 .addCallback(new EmptyCallback())
